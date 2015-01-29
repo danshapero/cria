@@ -2,7 +2,7 @@
 .SECONDARY:
 
 %.ll: %.c
-	clang -S -emit-llvm $<
+	clang -O0 -S -emit-llvm $<
 
 %.s: %.ll
 	llc $<
