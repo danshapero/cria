@@ -8,3 +8,4 @@ Useful links:
 * [LLVM BF compiler](https://github.com/jeremyroman/llvm-brainfuck)
 * [Haskell LLVM example.](http://www.stephendiehl.com/llvm/) Does Kaleidoscope with Haskell LLVM bindings.
 * [Clasp](https://drmeister.wordpress.com/2014/09/18/announcing-clasp/) Common Lisp compiler atop LLVM.
+* [How to compile lambda](http://matt.might.net/articles/closure-conversion/)
