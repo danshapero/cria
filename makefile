@@ -1,10 +1,10 @@
 
 .SECONDARY:
 
-%.bc: %.ll
-	llvm-as $<
+%.ll: %.c
+	clang -S -emit-llvm $<
 
-%.s: %.bc
+%.s: %.ll
 	llc $<
 
 clean:
