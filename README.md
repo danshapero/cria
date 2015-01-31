@@ -9,3 +9,5 @@ Useful links:
 * [Haskell LLVM example.](http://www.stephendiehl.com/llvm/) Does Kaleidoscope with Haskell LLVM bindings.
 * [Clasp](https://drmeister.wordpress.com/2014/09/18/announcing-clasp/) Common Lisp compiler atop LLVM.
 * [How to compile lambda](http://matt.might.net/articles/closure-conversion/)
+* [Scheme compiler workshop](http://www.cs.indiana.edu/eip/compile/)
+* [Small self-hosting scheme compiler](https://github.com/darius/ichbins)
