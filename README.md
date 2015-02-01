@@ -11,3 +11,5 @@ Useful links:
 * [How to compile lambda](http://matt.might.net/articles/closure-conversion/)
 * [Scheme compiler workshop](http://www.cs.indiana.edu/eip/compile/)
 * [Small self-hosting scheme compiler](https://github.com/darius/ichbins)
+* [Introduction to Scheme and its Implementation](ftp://ftp.cs.utexas.edu/pub/garbage/cs345/schintro-v14/schintro_toc.html)
+* [Make a Lisp](https://github.com/kanaka/mal/blob/master/process/guide.md) Interpreter for a Lisp in 20+ different languages, guide to making an interpreter.
