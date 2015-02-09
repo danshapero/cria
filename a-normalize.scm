@@ -1,53 +1,97 @@
 
 (use-modules (ice-9 match))
 
-(define (Value? M)
-  (match M
-    [`(quote ,_) #t]
-    [(? number?) #t]
-    [(? boolean?) #t]
-    [(? string?) #t]
-    [(? char?) #t]
-    [(? symbol?) #t]
+(define (atomic? exp)
+  (match exp
+    [`(quote ,_)         #t]
+    [(? number?)         #t]
+    [(? boolean?)        #t]
+    [(? string?)         #t]
+    [(? char?)           #t]
+    [(? symbol?)         #t]
     [(or '+ '- '* '/ '=) #t]
-    [else #f]))
+    [else                #f]))
 
-(define (normalize-term M)
-  (normalize M (lambda(x) x)))
+(define (normalize-term exp)
+  (normalize exp (lambda (x) x)))
 
-(define (normalize M k)
-  (match M
+(define (normalize exp k)
+  (match exp
     [`(lambda ,params ,body)
      (k `(lambda ,params ,(normalize-term body)))]
-    [`(let ([,x ,M1]) ,M2)
-     (normalize M1 (lambda (N1)
-                     `(let ([,x ,N1])
-                        ,(normalize M2 k))))]
-    [`(if ,M1 ,M2 ,M3)
-     (normalize-name M1 (lambda(t)
-                          (k `(if ,t
-                                  ,(normalize-term M2)
-                                  ,(normalize-term M3)))))]
-    [`(,F . ,M*)
-     (normalize-name F (lambda (t)
-                         (normalize-name* M* (lambda (t*)
+
+    [`(let () ,exp)
+     (normalize exp k)]
+
+    [`(let ([,x ,exp1] . ,clause) ,exp2)
+     (normalize exp1 (lambda (aexp1)
+                       `(let ([,x ,aexp1])
+                          ,(normalize `(let (,@clause) ,exp2) k))))]
+
+    [`(if ,exp1 ,exp2 ,exp3)
+     (normalize-name exp1 (lambda (t)
+                            (k `(if ,t
+                                    ,(normalize-term exp2)
+                                    ,(normalize-term exp3)))))]
+
+    [`(set! ,v ,exp)
+     (normalize-name exp (lambda (t)
+                           `(let ([,(gensym '_) (set! ,v ,t)])
+                              ,(k '(void)))))]
+
+    [`(,f . ,e*)
+     (normalize-name f (lambda (t)
+                         (normalize-name* e* (lambda (t*)
                                                (k `(,t . ,t*))))))]
-    [(? Value?)
-     (k M)]))
 
-(define (normalize-name M k)
-  (normalize M (lambda (N)
-                 (if (Value? N)
-                     (k N)
-                     (let ([t (gensym)])
-                       `(let ([,t ,N])
-                          ,(k t)))))))
+    [(? atomic?)
+     (k exp)]))
 
-(define (normalize-name* M* k)
-  (if (null? M*)
+(define (normalize-name exp k)
+  (normalize exp (lambda (aexp)
+                   (if (atomic? aexp)
+                       (k aexp)
+                       (let ([t (gensym)])
+                         `(let ([,t ,aexp]) ,(k t)))))))
+
+(define (normalize-name* exp* k)
+  (if (null? exp*)
       (k '())
-      (normalize-name (car M*)
-                      (lambda (t)
-                        (normalize-name* (cdr M*)
-                                         (lambda (t*)
-                                           (k `(,t . ,t*))))))))
+      (normalize-name (car exp*) (lambda (t)
+                                   (normalize-name* (cdr exp*)
+                                                    (lambda (t*)
+                                                      (k `(,t . ,t*))))))))
+
+
+;; Top-level normalization:
+(define (normalize-define def)
+  (match def
+    [`(define (,f . ,params) ,body)
+     `(define ,f ,(normalize-term `(lambda ,params ,body)))]
+
+    [`(define ,v ,exp)
+     `(begin ,@(flatten-top (normalize-term exp) v))]))
+
+
+(define (flatten-top exp v)
+  (match exp
+    [`(let ([,x ,cexp]) ,exp)
+     (cons `(define ,x ,cexp)
+           (flatten-top exp v))]
+
+    [else
+     `((define ,v ,exp))]))
+
+
+(define (normalize-program decs)
+  (match decs
+    ['()
+     '()]
+
+    [(cons `(define . ,_) rest)
+     (cons (normalize-define (car decs))
+           (normalize-program rest))]
+
+    [(cons exp rest)
+     (cons (normalize-term exp)
+           (normalize-program rest))]))
