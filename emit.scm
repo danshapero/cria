@@ -1,9 +1,6 @@
 
+(load "environment.scm")
 (use-modules (ice-9 match))
-
-(define (lookup sym sym-table)
-  (let ([pair (assoc sym sym-table)])
-    (if pair (cadr pair) pair)))
 
 (define (op->instruction op)
   (match op
@@ -22,7 +19,7 @@
   (cond
    [(symbol? obj) (lookup obj env)]
    [(literal? obj) obj]
-   [else (throw 'object-not-representable)]))
+   [#t (throw 'object-not-representable)]))
 
 
 (define (compile-binary-expr expr env)
