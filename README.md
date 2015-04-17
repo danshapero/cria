@@ -13,3 +13,4 @@ Useful links:
 * [Small self-hosting scheme compiler](https://github.com/darius/ichbins)
 * [Introduction to Scheme and its Implementation](ftp://ftp.cs.utexas.edu/pub/garbage/cs345/schintro-v14/schintro_toc.html)
 * [Make a Lisp](https://github.com/kanaka/mal/blob/master/process/guide.md) Interpreter for a Lisp in 20+ different languages, guide to making an interpreter.
+* [OCaml JIT compilation with LLVM](http://brierwoodapps.com/writing-a-jit-compiler-part-1/) first of a 3-part series on using OCaml bindings for LLVM to JIT compile things; [git repo](https://github.com/shawnhyam/son-of-blub)
