@@ -14,7 +14,15 @@ type data_type = SymbolType
                | BooleanType
                | CharacterType
                | ListType of data_type
-               | FunctionType of (data_type list) * (data_type list)
+               | FunctionType of data_type * data_type
+
+type term = IfTerm of expr * expr * expr
+          | LetTerm of string * expr * expr
+          | LambdaTerm of (string * data_type)
+                          * data_type
+                          * (expr list)
+          | DefineTerm of string * expr
+
 
 StringMap = Map.Make(String)
 
