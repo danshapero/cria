@@ -1,6 +1,6 @@
 
 type atom = Symbol of string
-          | Integer of int32
+          | Integer of int
           | Real of float
           | Boolean of bool
           | Character of char
@@ -16,32 +16,31 @@ type data_type = SymbolType
                | ListType of data_type
                | FunctionType of data_type * data_type
 
-type term = IfTerm of expr * expr * expr
-          | LetTerm of string * expr * expr
-          | LambdaTerm of (string * data_type)
-                          * data_type
-                          * (expr list)
-          | DefineTerm of string * expr
+let is_abstraction e =
+  match e with
+  | Atom _ -> false
+  | Expression ex -> (List.hd ex) = Atom (Symbol "lambda")
 
+let is_let e =
+  match e with
+  | Atom _ -> false
+  | Expression ex -> (List.hd ex) = Atom (Symbol "let")
 
-StringMap = Map.Make(String)
+let typeof_atom a =
+  match a with
+  | Symbol _ -> SymbolType
+  | Integer _ -> IntegerType
+  | Real _ -> RealType
+  | Boolean _ -> BooleanType
+  | Character _ -> CharacterType
+
+exception TypeCheckFailure of string;;
+
+let typeof e =
+  match e with
+  | Atom a -> typeof_atom a
+  | _ -> raise (TypeCheckFailure "Nope!")
+
+module StringMap = Map.Make(String)
 
 type type_table = data_type StringMap.t
-
-let print_atom a =
-  match a with
-    Symbol a -> Printf.printf "%s\n" a
-  | Integer a -> Printf.printf "%ld\n" a
-  | Real a -> Printf.printf "%g\n" a
-  | Boolean a -> Printf.printf "%B\n" a
-  | Character a -> Printf.printf "hey";;
-
-let rec print_expr a =
-  match a with
-    Atom a -> print_atom a
-  | Expression a -> let fir = List.hd a in
-                    print_expr fir;;
-
-
-let q = Symbol "+" in
-    print_atom q;;
