@@ -26,6 +26,21 @@ let is_let e =
   | Atom _ -> false
   | Expression ex -> (List.hd ex) = Atom (Symbol "let")
 
+let is_conditional e =
+  match e with
+  | Atom _ -> false
+  | Expression ex -> (List.hd ex) = Atom (Symbol "if")
+
+exception TypeCheckFailure of string;;
+
+module StringMap = Map.Make(String)
+type type_context = data_type StringMap.t
+
+let empty_context = StringMap.empty
+
+let add_context variable datatype context =
+  StringMap.add variable datatype context
+
 let typeof_atom a =
   match a with
   | Symbol _ -> SymbolType
@@ -34,13 +49,7 @@ let typeof_atom a =
   | Boolean _ -> BooleanType
   | Character _ -> CharacterType
 
-exception TypeCheckFailure of string;;
-
-let typeof e =
+let rec typeof e context =
   match e with
   | Atom a -> typeof_atom a
   | _ -> raise (TypeCheckFailure "Nope!")
-
-module StringMap = Map.Make(String)
-
-type type_table = data_type StringMap.t
