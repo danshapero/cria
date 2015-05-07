@@ -41,6 +41,27 @@ let empty_context = StringMap.empty
 let add_context variable datatype context =
   StringMap.add variable datatype context
 
+let rec add_contexts variables datatype context =
+  match variables with
+    | [] -> context
+    | x :: vars -> add_contexts vars datatype (add_context x datatype context)
+
+let default_context =
+  let ctxt =
+    add_contexts ["+"; "-"; "*"; "/"]
+                 (FunctionType (IntegerType,
+                               FunctionType (IntegerType, IntegerType)))
+                 empty_context in
+  let ctxt =
+    add_contexts ["and"; "or"]
+                 (FunctionType (BooleanType,
+                               FunctionType (BooleanType, BooleanType)))
+                 ctxt in
+  add_context "not"
+              (FunctionType (BooleanType, BooleanType))
+              ctxt
+
+
 let typeof_atom a =
   match a with
   | Symbol _ -> SymbolType

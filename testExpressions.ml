@@ -23,7 +23,7 @@ let test_fixture = "TypeChecker" >:::
                                         (Expression [(Atom (Symbol "+"));
                                                      (Atom (Symbol "x"));
                                                      (Atom (Integer 4))])])
-                           empty_context);
+                           default_context);
     );
 
   "conditionals" >::
@@ -33,7 +33,7 @@ let test_fixture = "TypeChecker" >:::
                                         (Atom (Boolean true));
                                         (Atom (Character 'x'));
                                         (Atom (Character 'y'));])
-                           empty_context);
+                           default_context);
 
       assert_raises (TypeCheckFailure "Conditional branches are different types")
                     (fun () ->
@@ -41,7 +41,7 @@ let test_fixture = "TypeChecker" >:::
                                          (Atom (Boolean true));
                                          (Atom (Character 'x'));
                                          (Atom (Integer 42));])
-                            empty_context);
+                            default_context);
 
       assert_raises (TypeCheckFailure "Conditional not Boolean")
                     (fun () ->
@@ -49,7 +49,7 @@ let test_fixture = "TypeChecker" >:::
                                          (Atom (Integer 4));
                                          (Atom (Character 'x'));
                                          (Atom (Character 'y'));])
-                            empty_context);
+                            default_context);
     );
 
   "lets" >::
@@ -61,7 +61,7 @@ let test_fixture = "TypeChecker" >:::
                                         (Expression [(Atom (Symbol "+"));
                                                      (Atom (Symbol "x"));
                                                      (Atom (Integer 1))]);])
-                           empty_context);
+                           default_context);
     );
 
    "applications" >::
@@ -73,7 +73,7 @@ let test_fixture = "TypeChecker" >:::
                                         (FunctionType (IntegerType, IntegerType))
                                         (add_context "x"
                                                      IntegerType
-                                                     empty_context)))
+                                                     default_context)))
     );
 ]
 
