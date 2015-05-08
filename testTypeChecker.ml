@@ -1,6 +1,6 @@
 
 open OUnit
-open Expressions
+open TypeChecker
 
 let test_fixture = "TypeChecker" >:::
 [
