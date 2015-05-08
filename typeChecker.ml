@@ -1,12 +1,5 @@
 
-type atom = Symbol of string
-          | Integer of int
-          | Real of float
-          | Boolean of bool
-          | Character of char
-
-type expr = Atom of atom
-          | Expression of expr list
+open Expressions
 
 type data_type = SymbolType
                | IntegerType
@@ -18,18 +11,18 @@ type data_type = SymbolType
 
 let is_abstraction e =
   match e with
-  | Atom _ -> false
-  | Expression ex -> (List.hd ex) = Atom (Symbol "lambda")
+  | Atom _  -> false
+  | Expr ex -> (List.hd ex) = Atom (Symbol "lambda")
 
 let is_let e =
   match e with
   | Atom _ -> false
-  | Expression ex -> (List.hd ex) = Atom (Symbol "let")
+  | Expr ex -> (List.hd ex) = Atom (Symbol "let")
 
 let is_conditional e =
   match e with
   | Atom _ -> false
-  | Expression ex -> (List.hd ex) = Atom (Symbol "if")
+  | Expr ex -> (List.hd ex) = Atom (Symbol "if")
 
 exception TypeCheckFailure of string;;
 

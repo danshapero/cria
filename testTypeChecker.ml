@@ -1,5 +1,6 @@
 
 open OUnit
+open Expressions
 open TypeChecker
 
 let test_fixture = "TypeChecker" >:::
@@ -17,58 +18,58 @@ let test_fixture = "TypeChecker" >:::
   "functions" >::
     ( fun () ->
       assert_equal (FunctionType (IntegerType, IntegerType))
-                   (typeof (Expression [(Atom (Symbol "lambda"));
-                                        (Expression [(Atom (Symbol "x"));
-                                                     (Atom (Symbol "int"))]);
-                                        (Expression [(Atom (Symbol "+"));
-                                                     (Atom (Symbol "x"));
-                                                     (Atom (Integer 4))])])
+                   (typeof (Expr [(Atom (Symbol "lambda"));
+                                  (Expr [(Atom (Symbol "x"));
+                                         (Atom (Symbol "int"))]);
+                                  (Expr [(Atom (Symbol "+"));
+                                         (Atom (Symbol "x"));
+                                         (Atom (Integer 4))])])
                            default_context);
     );
 
   "conditionals" >::
     ( fun () ->
       assert_equal CharacterType
-                   (typeof (Expression [(Atom (Symbol "if"));
-                                        (Atom (Boolean true));
-                                        (Atom (Character 'x'));
-                                        (Atom (Character 'y'));])
+                   (typeof (Expr [(Atom (Symbol "if"));
+                                  (Atom (Boolean true));
+                                  (Atom (Character 'x'));
+                                  (Atom (Character 'y'));])
                            default_context);
 
       assert_raises (TypeCheckFailure "Conditional branches are different types")
                     (fun () ->
-                     typeof (Expression [(Atom (Symbol "if"));
-                                         (Atom (Boolean true));
-                                         (Atom (Character 'x'));
-                                         (Atom (Integer 42));])
+                     typeof (Expr [(Atom (Symbol "if"));
+                                   (Atom (Boolean true));
+                                   (Atom (Character 'x'));
+                                   (Atom (Integer 42));])
                             default_context);
 
       assert_raises (TypeCheckFailure "Conditional not Boolean")
                     (fun () ->
-                     typeof (Expression [(Atom (Symbol "if"));
-                                         (Atom (Integer 4));
-                                         (Atom (Character 'x'));
-                                         (Atom (Character 'y'));])
+                     typeof (Expr [(Atom (Symbol "if"));
+                                   (Atom (Integer 4));
+                                   (Atom (Character 'x'));
+                                   (Atom (Character 'y'));])
                             default_context);
     );
 
   "lets" >::
     ( fun () ->
       assert_equal IntegerType
-                   (typeof (Expression [(Atom (Symbol "let"));
-                                        (Expression [(Atom (Symbol "x"));
-                                                     (Atom (Symbol "int"))]);
-                                        (Expression [(Atom (Symbol "+"));
-                                                     (Atom (Symbol "x"));
-                                                     (Atom (Integer 1))]);])
+                   (typeof (Expr [(Atom (Symbol "let"));
+                                  (Expr [(Atom (Symbol "x"));
+                                         (Atom (Symbol "int"))]);
+                                  (Expr [(Atom (Symbol "+"));
+                                         (Atom (Symbol "x"));
+                                         (Atom (Integer 1))]);])
                            default_context);
     );
 
    "applications" >::
     ( fun () ->
       assert_equal IntegerType
-                   (typeof (Expression [(Atom (Symbol "f"));
-                                        (Atom (Symbol "x"))])
+                   (typeof (Expr [(Atom (Symbol "f"));
+                                  (Atom (Symbol "x"))])
                            (add_context "f"
                                         (FunctionType (IntegerType, IntegerType))
                                         (add_context "x"
