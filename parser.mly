@@ -4,7 +4,8 @@
 %token <bool> BOOL
 %token <string> ID
 %token COLON
-%token LPAREN RPAREN
+%token LPAREN
+%token RPAREN
 %token EOF
 %start <Expressions.expr option> prog
 
@@ -15,6 +16,8 @@ prog:
   | e = expr { Some e }
 
 expr:
+  | LPAREN; e1 = expr; e2 = expr; RPAREN
+    { `Application (e1, e2) }
   | i = INT
     { `Constant (`Int i) }
   | x = FLOAT

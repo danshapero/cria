@@ -8,11 +8,14 @@ type constant = [
   ]
 
 
-type data_type = Bool 
+(*
+type data_type = Bool
                | Char
                | Int
                | Float
                | Function of data_type * data_type
+ *)
+type data_type = string
 
 (** Going to need symbol types at some point... *)
 (** Also algebraic data types... *)
@@ -31,15 +34,15 @@ type expr = [
 open Core.Std
 let output_constant c =
   match c with
-  | `Int i   -> printf "%d " i
-  | `Float x -> printf "%g " x
-  | `Bool p  -> printf "%B " p
+  | `Int i   -> printf "%d" i
+  | `Float x -> printf "%g" x
+  | `Bool p  -> printf "%B" p
 
 
 let rec output_expr outc expr =
   match expr with
     | `Constant c            -> output_constant c
-    | `Variable v            -> printf "%s " v
+    | `Variable v            -> printf "%s" v
     | `Application (e1, e2)  -> output_string outc "(";
                                 output_expr outc e1;
                                 output_string outc " ";
