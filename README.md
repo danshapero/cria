@@ -2,7 +2,16 @@
 
 Goofing about with LLVM. How the hell else am I going to learn it?
 
-Useful links:
+Dependencies
+============
+* [opam[(https://opam.ocaml.org/doc/Install.html). Linux users: don't install it from the package manager, use their installer script.
+* OCaml 4.0+. opam will install an OCaml compiler for you.
+* OCaml libraries: Menhir, Core. Installable with opam.
+* LLVM 3.4+
+
+
+Useful links
+============
 
 * [Mapping high-level constructs to LLVM.](http://llvm.lyngvig.org/Articles/Mapping-High-Level-Constructs-to-LLVM-IR) Some info about how to implement lambda in LLVM.
 * [LLVM BF compiler](https://github.com/jeremyroman/llvm-brainfuck)
@@ -15,3 +24,4 @@ Useful links:
 * [Make a Lisp](https://github.com/kanaka/mal/blob/master/process/guide.md) Interpreter for a Lisp in 20+ different languages, guide to making an interpreter.
 * [OCaml JIT compilation with LLVM](http://brierwoodapps.com/writing-a-jit-compiler-part-1/) first of a 3-part series on using OCaml bindings for LLVM to JIT compile things; [git repo](https://github.com/shawnhyam/son-of-blub)
 * [Types and Programming Languages](http://www.cis.upenn.edu/~bcpierce/tapl/) OCaml code for Pierce's Types and Programming Languages book
+* [Lexing and Parsing in OCaml](https://realworldocaml.org/v1/en/html/parsing-with-ocamllex-and-menhir.html)
