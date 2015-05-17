@@ -20,10 +20,10 @@ let exp = ['e' 'E'] ['-' '+']? digit+
 let int = ['+' '-']? digit+
 let float = digit* frac? exp?
 
-let bool = ["true" "false"]
+let bool = "true" | "false"
 
 let white = [' ' '\t']+
-let newline = ['\r' '\n' "\r\n"]+
+let newline = '\r' | '\n' | "\r\n"
 
 let id = ['a'-'z' 'A'-'Z' '_'] ['a'-'z' 'A'-'Z' '0'-'9' '_']*
 
@@ -35,13 +35,14 @@ rule read =
   | int      { INT (int_of_string (Lexing.lexeme lexbuf)) }
   | float    { FLOAT (float_of_string (Lexing.lexeme lexbuf)) }
   | bool     { BOOL (bool_of_string (Lexing.lexeme lexbuf)) }
+  | id       { ID (Lexing.lexeme lexbuf) }
   | '('      { LPAREN }
   | ')'      { RPAREN }
   | ':'      { COLON }
   | _ { raise (SyntaxError ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
   | eof      { EOF }
 
-
+(*
 and read_string buf =
   parse
   | '"'       { STRING (Buffer.contents buf) }
@@ -58,3 +59,4 @@ and read_string buf =
     }
   | _ { raise (SyntaxError ("Illegal string character: " ^ Lexing.lexeme lexbuf)) }
   | eof { raise (SyntaxError ("String is not terminated")) }
+*)
