@@ -4,6 +4,7 @@
 %token <bool> BOOL
 %token <string> ID
 %token COLON
+%token LAMBDA
 %token LPAREN
 %token RPAREN
 %token EOF
@@ -16,6 +17,8 @@ prog:
   | e = expr { Some e }
 
 expr:
+  | LPAREN; LAMBDA; x = ID; COLON; t = ID; body = expr; RPAREN
+    { `Abstraction (x, t, body) }
   | LPAREN; e1 = expr; e2 = expr; RPAREN
     { `Application (e1, e2) }
   | i = INT
