@@ -21,7 +21,7 @@ let parse_with_error lexbuf =
 let rec parse_and_print lexbuf =
   match parse_with_error lexbuf with
   | Some e ->
-    printf "%a\n" Expressions.output_expr e;
+    printf "%s\n" (Expressions.string_of_expr e);
     parse_and_print lexbuf
   | None -> ()
 

@@ -26,36 +26,29 @@ type expr = [
     | `Variable of variable
     | `Application of expr * expr
     | `Abstraction of variable * data_type * expr
-    | `Let of (variable * data_type * expr list) * expr
-    | `Letrec of (variable * data_type * expr list) * expr
+    | `Let of (variable * data_type * expr) list * expr
+    | `Letrec of (variable * data_type * expr) list * expr
   ]
 
 
 open Core.Std
-let output_constant c =
+let string_of_constant c =
   match c with
-  | `Int i   -> printf "%d" i
-  | `Float x -> printf "%g" x
-  | `Bool p  -> printf "%B" p
+  | `Int i   -> string_of_int i
+  | `Float x -> Float.to_string x
+  | `Bool p  -> string_of_bool p
 
 
-let rec output_expr outc expr =
+let rec string_of_expr expr =
   match expr with
-    | `Constant c            -> output_constant c
-    | `Variable v            -> printf "%s" v
-    | `Application (e1, e2)  -> output_string outc "(";
-                                output_expr outc e1;
-                                output_string outc " ";
-                                output_expr outc e2;
-                                output_string outc ")"
-    | `Abstraction (v, _, e) -> output_string outc "(lambda (";
-                                printf "%s" v;
-                                output_string outc ") ";
-                                output_expr outc e;
-                                output_string outc ") ";
-    | `Let (bindings, e)     -> output_string outc "(";
-                                output_string outc "let ";
-                                output_string outc ") " (* temporary *)
-    | `Letrec (bindings, e)  -> output_string outc "(";
-                                output_string outc "let ";
-                                output_string outc ") " (* temporary *)
+    | `Constant c            -> string_of_constant c
+    | `Variable v            -> v
+    | `Application (e1, e2)  -> let s1 = string_of_expr e1 in
+                                let s2 = string_of_expr e2 in
+                                "(" ^ s1 ^ " " ^ s2 ^ ")"
+    | `Abstraction (v, t, e) -> let s = string_of_expr e in
+                                "(lambda (" ^ v ^ ":" ^ t ^ ") " ^ s ^ ")"
+    | `Let (bindings, e)     -> "(let "
+                                ^ ")" (* temporary *)
+    | `Letrec (bindings, e)  -> "(let " 
+                                ^ ")" (* temporary *)
