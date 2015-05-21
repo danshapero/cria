@@ -24,7 +24,7 @@ type data_type = string
 type expr = [
     | `Constant of constant
     | `Variable of variable
-    | `Application of expr * expr
+    | `Application of expr * expr list
     | `Abstraction of (variable * data_type) list * expr
     | `Let of (variable * data_type * expr) list * expr
     | `Letrec of (variable * data_type * expr) list * expr
@@ -55,9 +55,9 @@ let rec string_of_expr expr =
   match expr with
     | `Constant c            -> string_of_constant c
     | `Variable v            -> v
-    | `Application (e1, e2)  -> let s1 = string_of_expr e1 in
-                                let s2 = string_of_expr e2 in
-                                "(" ^ s1 ^ " " ^ s2 ^ ")"
+    | `Application (f, args) -> let sf = string_of_expr f in
+                                let sa = List.map string_of_expr args in
+                                "(" ^ sf ^ " " ^ (String.concat " " sa) ^ ")"
     | `Abstraction (args, e) -> let s = string_of_expr e in
                                 let a = string_of_args_list args in
                                 "(lambda (" ^ a ^ ") " ^ s ^ ")"

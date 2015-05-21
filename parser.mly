@@ -19,8 +19,8 @@ prog:
 expr:
   | LPAREN; LAMBDA; LPAREN; args = var_decl_list; RPAREN; body = expr; RPAREN
     { `Abstraction (args, body) }
-  | LPAREN; e1 = expr; e2 = expr; RPAREN
-    { `Application (e1, e2) }
+  | LPAREN; f = expr; args = list(expr); RPAREN
+    { `Application (f, args) }
   | i = INT
     { `Constant (`Int i) }
   | x = FLOAT
