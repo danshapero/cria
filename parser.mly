@@ -17,8 +17,8 @@ prog:
   | e = expr { Some e }
 
 expr:
-  | LPAREN; LAMBDA; x = ID; COLON; t = ID; body = expr; RPAREN
-    { `Abstraction (x, t, body) }
+  | LPAREN; LAMBDA; LPAREN; args = var_decl_list; RPAREN; body = expr; RPAREN
+    { `Abstraction (args, body) }
   | LPAREN; e1 = expr; e2 = expr; RPAREN
     { `Application (e1, e2) }
   | i = INT
@@ -29,4 +29,14 @@ expr:
     { `Constant (`Bool p) }
   | s = ID
     { `Variable s }
+  ;
+
+var_decl_list:
+  var_decls = list(var_decl)
+  { var_decls }
+  ;
+
+var_decl:
+  x = ID; COLON; t = ID (* temporary while types are strings *)
+  { (x, t) }
   ;
