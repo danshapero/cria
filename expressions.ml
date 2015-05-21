@@ -31,11 +31,10 @@ type expr = [
   ]
 
 
-open Core.Std
 let string_of_constant c =
   match c with
   | `Int i   -> string_of_int i
-  | `Float x -> Float.to_string x
+  | `Float x -> string_of_float x
   | `Bool p  -> string_of_bool p
 
 

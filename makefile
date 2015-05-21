@@ -16,4 +16,4 @@ test_parser.native: expressions.ml parser.mly lexer.mll test_parser.ml
 	llc $<
 
 clean:
-	rm -rf *.s *.bc *.o
+	rm -rf *.s *.bc *.o && ocamlbuild -clean
