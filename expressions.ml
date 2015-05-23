@@ -61,8 +61,9 @@ let rec string_of_expr expr =
     | `Let (bindings, e)     -> let s = string_of_expr e in
                                 let b = List.map string_of_binding bindings in
                                 "(let (" ^ (String.concat " " b) ^ ") " ^ s ^ ")"
-    | `Letrec (bindings, e)  -> "(let "
-                                ^ ")" (* temporary *)
+    | `Letrec (bindings, e)  -> let s = string_of_expr e in
+                                let b = List.map string_of_binding bindings in
+                                "(letrec (" ^ (String.concat " " b) ^ ") " ^ s ^ ")"
     | `If (cond, t, f)       -> "(if " ^ (string_of_expr cond)
                                  ^ " " ^ (string_of_expr t)
                                  ^ " " ^ (string_of_expr f) ^ ")"

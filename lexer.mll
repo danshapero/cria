@@ -42,6 +42,7 @@ rule read =
   | bool     { BOOL (bool_of_string (Lexing.lexeme lexbuf)) }
   | "lambda" { LAMBDA }
   | "let"    { LET }
+  | "letrec" { LETREC }
   | "if"     { IF }
   | id       { ID (Lexing.lexeme lexbuf) }
   | '('      { LPAREN }
