@@ -41,14 +41,9 @@ let string_of_constant c =
 (* Temporarily while types are strings *)
 let string_of_data_type t = t
 
-let string_of_args_list args =
-  let rec f args s =
-    match args with
-    | []             -> s
-    | (x, t) :: []   -> s ^ x ^ ":" ^ (string_of_data_type t)
-    | (x, t) :: args -> f args (s ^ x ^ ":" ^ (string_of_data_type t) ^ " ")
-  in
-  f args ""
+
+let string_of_arg_decl (name, ty) =
+  name ^ ":" ^ ty
 
 
 let rec string_of_expr expr =
@@ -59,8 +54,8 @@ let rec string_of_expr expr =
                                 let sa = List.map string_of_expr args in
                                 "(" ^ sf ^ " " ^ (String.concat " " sa) ^ ")"
     | `Abstraction (args, e) -> let s = string_of_expr e in
-                                let a = string_of_args_list args in
-                                "(lambda (" ^ a ^ ") " ^ s ^ ")"
+                                let a = List.map string_of_arg_decl args in
+                                "(lambda (" ^ (String.concat " " a) ^ ") " ^ s ^ ")"
     | `Let (bindings, e)     -> "(let "
                                 ^ ")" (* temporary *)
     | `Letrec (bindings, e)  -> "(let " 
