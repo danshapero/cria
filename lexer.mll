@@ -25,7 +25,12 @@ let bool = "true" | "false"
 let white = [' ' '\t']+
 let newline = '\r' | '\n' | "\r\n"
 
-let id = ['a'-'z' 'A'-'Z' '_'] ['a'-'z' 'A'-'Z' '0'-'9' '_']*
+let letter = ['a'-'z' 'A'-'Z']
+let special_initial = '!' | '$' | '%' | '&' | '*' | '/' | '<' | '='
+                    | '>' | '?' | '^' | '_' | '~' | '+' | '-'
+let initial = letter | special_initial
+let subsequent = initial | digit
+let id = initial subsequent*
 
 
 rule read =
