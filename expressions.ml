@@ -28,6 +28,7 @@ type expr = [
     | `Abstraction of (variable * data_type) list * expr
     | `Let of (variable * data_type * expr) list * expr
     | `Letrec of (variable * data_type * expr) list * expr
+    | `If of (expr * expr * expr)
   ]
 
 
@@ -60,5 +61,8 @@ let rec string_of_expr expr =
     | `Let (bindings, e)     -> let s = string_of_expr e in
                                 let b = List.map string_of_binding bindings in
                                 "(let (" ^ (String.concat " " b) ^ ") " ^ s ^ ")"
-    | `Letrec (bindings, e)  -> "(let " 
+    | `Letrec (bindings, e)  -> "(let "
                                 ^ ")" (* temporary *)
+    | `If (cond, t, f)       -> "(if " ^ (string_of_expr cond)
+                                 ^ " " ^ (string_of_expr t)
+                                 ^ " " ^ (string_of_expr f) ^ ")"

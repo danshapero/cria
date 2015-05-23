@@ -6,6 +6,7 @@
 %token COLON
 %token LAMBDA
 %token LET
+%token IF
 %token LPAREN
 %token RPAREN
 %token EOF
@@ -32,6 +33,8 @@ sexpr:
     { `Application (f, args) }
   | LET; LPAREN; bindings = var_binding_list; RPAREN; body = expr;
     { `Let (bindings, body) }
+  | IF; cond = expr; t_branch = expr; f_branch = expr
+    { `If (cond, t_branch, f_branch) }
   ;
 
 var_decl_list:
