@@ -36,6 +36,7 @@ rule read =
   | float    { FLOAT (float_of_string (Lexing.lexeme lexbuf)) }
   | bool     { BOOL (bool_of_string (Lexing.lexeme lexbuf)) }
   | "lambda" { LAMBDA }
+  | "let"    { LET }
   | id       { ID (Lexing.lexeme lexbuf) }
   | '('      { LPAREN }
   | ')'      { RPAREN }

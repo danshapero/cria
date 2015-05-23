@@ -5,6 +5,7 @@
 %token <string> ID
 %token COLON
 %token LAMBDA
+%token LET
 %token LPAREN
 %token RPAREN
 %token EOF
@@ -17,18 +18,20 @@ prog:
   | e = expr { Some e }
 
 expr:
-  | LPAREN; LAMBDA; LPAREN; args = var_decl_list; RPAREN; body = expr; RPAREN
+  | LPAREN; e = sexpr; RPAREN  { e }
+  | i = INT                    { `Constant (`Int i) }
+  | x = FLOAT                  { `Constant (`Float x) }
+  | p = BOOL                   { `Constant (`Bool p) }
+  | s = ID                     { `Variable s }
+  ;
+
+sexpr:
+  | LAMBDA; LPAREN; args = var_decl_list; RPAREN; body = expr;
     { `Abstraction (args, body) }
-  | LPAREN; f = expr; args = list(expr); RPAREN
+  | f = expr; args = list(expr)
     { `Application (f, args) }
-  | i = INT
-    { `Constant (`Int i) }
-  | x = FLOAT
-    { `Constant (`Float x) }
-  | p = BOOL
-    { `Constant (`Bool p) }
-  | s = ID
-    { `Variable s }
+  | LET; LPAREN; bindings = var_binding_list; RPAREN; body = expr;
+    { `Let (bindings, body) }
   ;
 
 var_decl_list:
@@ -39,4 +42,14 @@ var_decl_list:
 var_decl:
   x = ID; COLON; t = ID (* temporary while types are strings *)
   { (x, t) }
+  ;
+
+var_binding_list:
+  var_bindings = list(var_binding)
+  { var_bindings }
+  ;
+
+var_binding:
+  x = ID; COLON; t = ID; e = expr
+  { (x, t, e) }
   ;

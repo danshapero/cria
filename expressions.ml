@@ -41,12 +41,13 @@ let string_of_constant c =
 (* Temporarily while types are strings *)
 let string_of_data_type t = t
 
-
-let string_of_arg_decl (name, ty) =
-  name ^ ":" ^ ty
-
-
 let rec string_of_expr expr =
+  let string_of_binding (name, ty, expr) =
+    name ^ ":" ^ (string_of_data_type ty) ^ " " ^ (string_of_expr expr)
+  in
+  let string_of_arg_decl (name, ty) =
+    name ^ ":" ^ (string_of_data_type ty)
+  in
   match expr with
     | `Constant c            -> string_of_constant c
     | `Variable v            -> v
@@ -56,7 +57,8 @@ let rec string_of_expr expr =
     | `Abstraction (args, e) -> let s = string_of_expr e in
                                 let a = List.map string_of_arg_decl args in
                                 "(lambda (" ^ (String.concat " " a) ^ ") " ^ s ^ ")"
-    | `Let (bindings, e)     -> "(let "
-                                ^ ")" (* temporary *)
+    | `Let (bindings, e)     -> let s = string_of_expr e in
+                                let b = List.map string_of_binding bindings in
+                                "(let (" ^ (String.concat " " b) ^ ") " ^ s ^ ")"
     | `Letrec (bindings, e)  -> "(let " 
                                 ^ ")" (* temporary *)
