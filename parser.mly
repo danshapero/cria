@@ -1,4 +1,8 @@
 
+%{
+open Expressions
+%}
+
 %token <int> INT
 %token <float> FLOAT
 %token <bool> BOOL
@@ -21,23 +25,23 @@ prog:
 
 expr:
   | LPAREN; e = sexpr; RPAREN  { e }
-  | i = INT                    { `Constant (`Int i) }
-  | x = FLOAT                  { `Constant (`Float x) }
-  | p = BOOL                   { `Constant (`Bool p) }
-  | s = ID                     { `Variable s }
+  | i = INT                    { Constant (Int i) }
+  | x = FLOAT                  { Constant (Float x) }
+  | p = BOOL                   { Constant (Bool p) }
+  | s = ID                     { Variable s }
   ;
 
 sexpr:
   | LAMBDA; LPAREN; args = var_decl_list; RPAREN; body = expr;
-    { `Abstraction (args, body) }
+    { Abstraction (args, body) }
   | f = expr; args = list(expr)
-    { `Application (f, args) }
+    { Application (f, args) }
   | LET; LPAREN; bindings = var_binding_list; RPAREN; body = expr;
-    { `Let (bindings, body) }
+    { Let (bindings, body) }
   | LETREC; LPAREN; bindings = var_binding_list; RPAREN; body = expr;
-    { `Letrec (bindings, body) }
+    { Letrec (bindings, body) }
   | IF; cond = expr; t_branch = expr; f_branch = expr
-    { `If (cond, t_branch, f_branch) }
+    { Conditional (cond, t_branch, f_branch) }
   ;
 
 var_decl_list:
