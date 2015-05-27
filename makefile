@@ -1,10 +1,7 @@
 
 .SECONDARY:
 
-all: test_parser.native
-
-test_parser.native: expressions.ml parser.mly lexer.mll test_parser.ml
-	ocamlbuild -use-menhir -tag thread -use-ocamlfind -quiet -pkg core test_parser.native
+all: testParser.native
 
 testParser.native: expressions.ml parser.mly lexer.mll testParser.ml
 	ocamlbuild -use-menhir -tag thread -use-ocamlfind -quiet -pkg core testParser.native
