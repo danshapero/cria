@@ -12,6 +12,10 @@ open Expressions
 %token LET
 %token LETREC
 %token IF
+%token BOOL_T
+%token INT_T
+%token FLOAT_T
+%token ARROW
 %token LPAREN
 %token RPAREN
 %token EOF
@@ -22,6 +26,14 @@ open Expressions
 prog:
   | EOF      { None }
   | e = expr { Some e }
+
+data_type:
+  | BOOL_T   { Bool_t }
+  | INT_T    { Int_t }
+  | FLOAT_T  { Float_t }
+  | LPAREN; ARROW; ts = list(data_type); RPAREN;
+    { Function_t ts }
+  ;
 
 expr:
   | LPAREN; e = sexpr; RPAREN  { e }
@@ -50,7 +62,7 @@ var_decl_list:
   ;
 
 var_decl:
-  x = ID; COLON; t = ID (* temporary while types are strings *)
+  x = ID; COLON; t = data_type
   { (x, t) }
   ;
 
@@ -60,6 +72,6 @@ var_binding_list:
   ;
 
 var_binding:
-  x = ID; COLON; t = ID; e = expr
+  x = ID; COLON; t = data_type; e = expr
   { (x, t, e) }
   ;

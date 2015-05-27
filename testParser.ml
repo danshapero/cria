@@ -54,7 +54,13 @@ let test_fixture = "Expression parser" >:::
   "variables" >::
     (
       fun () -> assert_equal true
-                             (correct_parse "x" (Variable "x"))
+                             (correct_parse "x" (Variable "x"));
+                assert_equal false
+                             (correct_parse "1" (Variable "1"));
+                assert_equal true
+                             (correct_parse "+" (Variable "+"));
+                assert_equal true
+                             (correct_parse "yes?" (Variable "yes?"))
     );
 
   "applications" >::

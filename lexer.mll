@@ -44,6 +44,10 @@ rule read =
   | "let"    { LET }
   | "letrec" { LETREC }
   | "if"     { IF }
+  | "bool"   { BOOL_T }
+  | "int"    { INT_T }
+  | "float"  { FLOAT_T }
+  | "->"     { ARROW }
   | id       { ID (Lexing.lexeme lexbuf) }
   | '('      { LPAREN }
   | ')'      { RPAREN }

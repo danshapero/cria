@@ -7,18 +7,10 @@ type constant =
     | Bool of bool
 
 
-(*
-type data_type = Bool
-               | Char
-               | Int
-               | Float
-               | Function of data_type * data_type
- *)
-type data_type = string
-
-(** Going to need symbol types at some point... *)
-(** Also algebraic data types... *)
-(** Also arrays... *)
+type data_type = Bool_t
+               | Int_t
+               | Float_t
+               | Function_t of data_type list
 
 type expr =
     | Constant of constant
@@ -37,8 +29,14 @@ let string_of_constant c =
   | Bool p  -> string_of_bool p
 
 
-(* Temporarily while types are strings *)
-let string_of_data_type t = t
+let rec string_of_data_type t =
+  match t with
+    | Bool_t        -> "bool"
+    | Int_t         -> "int"
+    | Float_t       -> "float"
+    | Function_t ts -> let arg_strings = List.map string_of_data_type ts in
+                       "(-> " ^ (String.concat " " arg_strings) ^ ")"
+
 
 let rec string_of_expr expr =
   let string_of_binding (name, ty, expr) =
