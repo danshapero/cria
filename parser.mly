@@ -31,8 +31,8 @@ data_type:
   | BOOL_T   { Bool_t }
   | INT_T    { Int_t }
   | FLOAT_T  { Float_t }
-  | LPAREN; ARROW; ts = list(data_type); RPAREN;
-    { Function_t ts }
+  | LPAREN; args = list(data_type); ARROW; ret = data_type; RPAREN;
+    { Function_t (args, ret) }
   ;
 
 expr:
@@ -44,8 +44,9 @@ expr:
   ;
 
 sexpr:
-  | LAMBDA; LPAREN; args = var_decl_list; RPAREN; body = expr;
-    { Abstraction (args, body) }
+  | LAMBDA; LPAREN; args = var_decl_list; RPAREN; COLON; ret = data_type;
+      body = expr;
+    { Abstraction (args, ret, body) }
   | f = expr; args = list(expr)
     { Application (f, args) }
   | LET; LPAREN; bindings = var_binding_list; RPAREN; body = expr;

@@ -85,6 +85,19 @@ let test_fixture = "Expression parser" >:::
       )
     );
 
+  "abstractions" >::
+    (
+      ( fun () ->
+        assert_equal true
+                     (correct_parse "(lambda (x:int):int (+ x 1))"
+                                    (Abstraction ([("x", Int_t)],
+                                                  Int_t,
+                                                  (Application (Variable "+",
+                                                                [Variable "x";
+                                                                 Constant (Int 1)])))))
+      )
+    );
+
   "conditionals" >::
     (
       ( fun () ->
