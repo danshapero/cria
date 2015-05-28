@@ -1,29 +1,6 @@
 
 open Expressions
 
-type data_type = SymbolType
-               | IntegerType
-               | RealType
-               | BooleanType
-               | CharacterType
-               | ListType of data_type
-               | FunctionType of data_type * data_type
-
-let is_abstraction e =
-  match e with
-  | Atom _  -> false
-  | Expr ex -> (List.hd ex) = Atom (Symbol "lambda")
-
-let is_let e =
-  match e with
-  | Atom _ -> false
-  | Expr ex -> (List.hd ex) = Atom (Symbol "let")
-
-let is_conditional e =
-  match e with
-  | Atom _ -> false
-  | Expr ex -> (List.hd ex) = Atom (Symbol "if")
-
 exception TypeCheckFailure of string;;
 
 module StringMap = Map.Make(String)
@@ -34,36 +11,53 @@ let empty_context = StringMap.empty
 let add_context variable datatype context =
   StringMap.add variable datatype context
 
-let rec add_contexts variables datatype context =
-  match variables with
-    | [] -> context
-    | x :: vars -> add_contexts vars datatype (add_context x datatype context)
+let add_contexts variables datatype context =
+  List.fold_left (fun (var context) ->
+                  add_context var datatype context)
+                  context
+                  variables
 
 let default_context =
   let ctxt =
     add_contexts ["+"; "-"; "*"; "/"]
-                 (FunctionType (IntegerType,
-                               FunctionType (IntegerType, IntegerType)))
+                 (Function_t ([Int_t; Int_t],
+                               Int_t))
                  empty_context in
   let ctxt =
     add_contexts ["and"; "or"]
-                 (FunctionType (BooleanType,
-                               FunctionType (BooleanType, BooleanType)))
+                 (Function_t ([Bool_t; Bool_t],
+                              Bool_t))
                  ctxt in
   add_context "not"
-              (FunctionType (BooleanType, BooleanType))
+              (Function_t ([Bool_t],
+                           Bool_t))
               ctxt
 
 
-let typeof_atom a =
+let typeof_constant a =
   match a with
-  | Symbol _ -> SymbolType
-  | Integer _ -> IntegerType
-  | Real _ -> RealType
-  | Boolean _ -> BooleanType
-  | Character _ -> CharacterType
+  | Int _ -> Int_t
+  | Float _ -> Float_t
+  | Bool _ -> Bool_t
+
+let typeof_variable x context =
+  StringMap.find x context
 
 let rec typeof e context =
   match e with
-  | Atom a -> typeof_atom a
+  | Constant a -> typeof_constant a
+  | Variable x -> typeof_variable x context
+  | Application (f, args) ->
+    let arg_types = List.map (fun (x) -> typeof x context) args in
+    match (typeof f context) with
+    | Function_t (f_arg_types, ret_type) ->
+      if arg_types = f_arg_types
+        ret_type
+      else
+        raise (TypeCheckFailure "Arg types did not match return type!")
+    | _ -> raise (TypeCheckFailure "First expr in application not a function!")
+  | Abstraction (* Write this *)
+  | Let (* This too *)
+  | Letrec (* and this *)
+  | Conditional (* aaaand this *)
   | _ -> raise (TypeCheckFailure "Nope!")
