@@ -11,11 +11,18 @@ let empty_context = StringMap.empty
 let add_context variable datatype context =
   StringMap.add variable datatype context
 
-let add_contexts variables datatype context =
-  List.fold_left (fun (var context) ->
-                  add_context var datatype context)
-                  context
-                  variables
+(* Make this a list fold *)
+let rec add_contexts variables datatype context =
+  match variables with
+  | [] -> context
+  | x :: variables -> add_contexts variables
+                                   datatype
+                                   (add_context x datatype context)
+
+let rec add_vars decls context =
+  match decls with
+  | [] -> context
+  | (x, t) :: decls -> add_vars decls (add_context x t context)
 
 let default_context =
   let ctxt =
@@ -47,17 +54,26 @@ let rec typeof e context =
   match e with
   | Constant a -> typeof_constant a
   | Variable x -> typeof_variable x context
-  | Application (f, args) ->
-    let arg_types = List.map (fun (x) -> typeof x context) args in
-    match (typeof f context) with
-    | Function_t (f_arg_types, ret_type) ->
-      if arg_types = f_arg_types
-        ret_type
-      else
-        raise (TypeCheckFailure "Arg types did not match return type!")
-    | _ -> raise (TypeCheckFailure "First expr in application not a function!")
-  | Abstraction (* Write this *)
-  | Let (* This too *)
+  | Application (f, args) -> typeof_application f args context
+  | Abstraction (args, ret_type, body) -> typeof_abstraction args ret_type body context
+(*  | Let (bindings, body) -> (* write this *)
   | Letrec (* and this *)
-  | Conditional (* aaaand this *)
+  | Conditional (* aaaand this *) *)
   | _ -> raise (TypeCheckFailure "Nope!")
+and typeof_application f args context =
+  let arg_types = List.map (fun x -> typeof x context) args in
+  match (typeof f context) with
+  | Function_t (f_arg_types, ret_type) ->
+    if arg_types = f_arg_types then
+      ret_type
+    else
+      raise (TypeCheckFailure "Arg types did not match return type!")
+  | _ -> raise (TypeCheckFailure "First expr in application not a function!")
+and typeof_abstraction args ret_type body context =
+  let context = add_vars args context in
+  let body_type = typeof body context in
+  if body_type = ret_type then
+    let arg_types = List.map (fun p -> snd p) args in
+    Function_t (arg_types, ret_type)
+  else
+    raise (TypeCheckFailure "Declared/inferred function body type mismatch!")
