@@ -8,34 +8,34 @@ type type_context = data_type StringMap.t
 
 let empty_context = StringMap.empty
 
-let add_context variable datatype context =
+let add_binding variable datatype context =
   StringMap.add variable datatype context
 
 (* Make this a list fold *)
-let rec add_contexts variables datatype context =
+let rec add_variables variables datatype context =
   match variables with
   | [] -> context
-  | x :: variables -> add_contexts variables
-                                   datatype
-                                   (add_context x datatype context)
+  | x :: variables -> add_variables variables
+                                    datatype
+                                    (add_binding x datatype context)
 
-let rec add_vars decls context =
-  match decls with
+let rec add_bindings bindings context =
+  match bindings with
   | [] -> context
-  | (x, t) :: decls -> add_vars decls (add_context x t context)
+  | (x, t) :: bindings -> add_bindings bindings (add_binding x t context)
 
 let default_context =
   let ctxt =
-    add_contexts ["+"; "-"; "*"; "/"]
-                 (Function_t ([Int_t; Int_t],
+    add_variables ["+"; "-"; "*"; "/"]
+                  (Function_t ([Int_t; Int_t],
                                Int_t))
-                 empty_context in
+                  empty_context in
   let ctxt =
-    add_contexts ["and"; "or"]
-                 (Function_t ([Bool_t; Bool_t],
-                              Bool_t))
+    add_variables ["and"; "or"]
+                  (Function_t ([Bool_t; Bool_t],
+                               Bool_t))
                  ctxt in
-  add_context "not"
+  add_binding "not"
               (Function_t ([Bool_t],
                            Bool_t))
               ctxt
@@ -70,7 +70,7 @@ and typeof_application f args context =
       raise (TypeCheckFailure "Arg types did not match return type!")
   | _ -> raise (TypeCheckFailure "First expr in application not a function!")
 and typeof_abstraction args ret_type body context =
-  let context = add_vars args context in
+  let context = add_bindings args context in
   let body_type = typeof body context in
   if body_type = ret_type then
     let arg_types = List.map (fun p -> snd p) args in
