@@ -29,6 +29,16 @@ let test_fixture = "TypeChecker" >:::
                                                        Variable "y"])))
                             default_context)
     );
+
+  "applications" >::
+    ( fun () ->
+      assert_equal Int_t
+                   (typeof (Application (Variable "+",
+                                         [Constant (Int 1);
+                                          Constant (Int 2)]))
+                   default_context)
+
+    );
 ]
 
 let _ = run_test_tt_main test_fixture
