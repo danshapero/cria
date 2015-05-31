@@ -39,6 +39,17 @@ let test_fixture = "TypeChecker" >:::
                    default_context)
 
     );
+
+  "let" >::
+    ( fun () ->
+      assert_equal Int_t
+                   (typeof (Let ([("x", Int_t, Constant (Int 1))],
+                                 (Application (Variable "+",
+                                               [Variable "x";
+                                                Constant (Int 1)]))))
+                           default_context)
+
+    );
 ]
 
 let _ = run_test_tt_main test_fixture

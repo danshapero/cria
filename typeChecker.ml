@@ -56,8 +56,8 @@ let rec typeof e context =
   | Variable x -> typeof_variable x context
   | Application (f, args) -> typeof_application f args context
   | Abstraction (args, ret_type, body) -> typeof_abstraction args ret_type body context
-(*  | Let (bindings, body) -> (* write this *)
-  | Letrec (* and this *)
+  | Let (bindings, body) -> typeof_let bindings body context
+(*  | Letrec (* and this *)
   | Conditional (* aaaand this *) *)
   | _ -> raise (TypeCheckFailure "Nope!")
 and typeof_application f args context =
@@ -77,3 +77,15 @@ and typeof_abstraction args ret_type body context =
     Function_t (arg_types, ret_type)
   else
     raise (TypeCheckFailure "Declared/inferred function body type mismatch!")
+and typeof_let bindings body context =
+  let rec check_let_bindings bindings context =
+    match bindings with
+    | [] -> context
+    | (x, t, e) :: bindings
+      -> let context = add_binding x t context in
+         if (typeof e context) = t then
+           check_let_bindings bindings context
+         else
+           raise (TypeCheckFailure "Declared/inferred let binding type mismatch!")
+  in
+  typeof body (check_let_bindings bindings context)
