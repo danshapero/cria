@@ -58,7 +58,7 @@ let rec typeof e context =
   | Application (f, args) -> typeof_application f args context
   | Abstraction (args, ret_type, body) -> typeof_abstraction args ret_type body context
   | Let (bindings, body) -> typeof_let bindings body context
-  (*  | Letrec -> typeof_letrec bindings body context *)
+  | Letrec (bindings, body) -> typeof_letrec bindings body context
   | Conditional (condition, true_branch, false_branch) ->
      if (typeof condition context) = Bool_t then
        let t_true_branch = typeof true_branch context
@@ -69,7 +69,6 @@ let rec typeof e context =
          raise (TypeCheckFailure "Types of conditional branches don't match!")
      else
        raise (TypeCheckFailure "Condition not a boolean!")
-  | _ -> raise (TypeCheckFailure "Nope!")
 and typeof_application f args context =
   let arg_types = List.map (fun x -> typeof x context) args in
   match (typeof f context) with
@@ -96,6 +95,28 @@ and typeof_let bindings body context =
          if (typeof e context) = t then
            check_let_bindings bindings context
          else
-           raise (TypeCheckFailure "Declared/inferred let binding type mismatch!")
+           raise (TypeCheckFailure
+                    "Declared/inferred let binding type mismatch!")
   in
   typeof body (check_let_bindings bindings context)
+and typeof_letrec bindings body context =
+  let rec add_letrec_bindings bindings context =
+    match bindings with
+    | [] -> context
+    | (x, t, _) :: bindings
+      -> add_letrec_bindings bindings (add_binding x t context)
+  and check_letrec_bindings bindings context =
+    match bindings with
+    | [] -> true
+    | (_, t, e) :: bindings
+      -> if (typeof e context) = t then
+           check_letrec_bindings bindings context
+         else
+           false
+  in
+  let context = add_letrec_bindings bindings context in
+  if check_letrec_bindings bindings context then
+    typeof body context
+  else
+    raise (TypeCheckFailure
+             "Declared/inferred letrec binding type mismatch!")
