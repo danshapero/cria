@@ -3,3 +3,7 @@
 *.s
 *.o
 *.native
+*.cmi
+*.cmo
+*.cmx
+_build/*
