@@ -50,6 +50,7 @@ let typeof_constant a =
 let typeof_variable x context =
   StringMap.find x context
 
+
 let rec typeof e context =
   match e with
   | Constant a -> typeof_constant a
@@ -57,8 +58,17 @@ let rec typeof e context =
   | Application (f, args) -> typeof_application f args context
   | Abstraction (args, ret_type, body) -> typeof_abstraction args ret_type body context
   | Let (bindings, body) -> typeof_let bindings body context
-(*  | Letrec (* and this *)
-  | Conditional (* aaaand this *) *)
+  (*  | Letrec -> typeof_letrec bindings body context *)
+  | Conditional (condition, true_branch, false_branch) ->
+     if (typeof condition context) = Bool_t then
+       let t_true_branch = typeof true_branch context
+       and t_false_branch = typeof false_branch context in
+       if t_true_branch = t_false_branch then
+         t_true_branch
+       else
+         raise (TypeCheckFailure "Types of conditional branches don't match!")
+     else
+       raise (TypeCheckFailure "Condition not a boolean!")
   | _ -> raise (TypeCheckFailure "Nope!")
 and typeof_application f args context =
   let arg_types = List.map (fun x -> typeof x context) args in

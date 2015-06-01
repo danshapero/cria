@@ -50,6 +50,23 @@ let test_fixture = "TypeChecker" >:::
                            default_context)
 
     );
+
+  "conditionals" >::
+    ( fun () ->
+      assert_equal Int_t
+                   (typeof (Conditional (Constant (Bool true),
+                                         Constant (Int 1),
+                                         Constant (Int 2)))
+                           empty_context);
+      assert_equal Int_t
+                   (typeof (Application (Conditional (Constant (Bool true),
+                                                      Variable "+",
+                                                      Variable "-"),
+                                         [Constant (Int 1);
+                                          Constant (Int 2)]))
+                           default_context);
+
+    );
 ]
 
 let _ = run_test_tt_main test_fixture
