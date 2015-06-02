@@ -58,14 +58,20 @@ let test_fixture = "TypeChecker" >:::
                                          Constant (Int 1),
                                          Constant (Int 2)))
                            empty_context);
-      assert_equal Int_t
-                   (typeof (Application (Conditional (Constant (Bool true),
-                                                      Variable "+",
-                                                      Variable "-"),
-                                         [Constant (Int 1);
-                                          Constant (Int 2)]))
-                           default_context);
-
+      assert_equal (Function_t ([Int_t], Int_t))
+                   (typeof
+                      (Abstraction
+                         ([("k", Int_t)],
+                          Int_t,
+                          Application (Variable "*",
+                                       [Variable "k";
+                                        Conditional (Application
+                                                       (Variable ">",
+                                                        [Variable "k";
+                                                         Constant (Int 0)]),
+                                                     Constant (Int 1),
+                                                     Constant (Int ~-1))])))
+                      default_context)
     );
 ]
 
