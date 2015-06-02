@@ -31,10 +31,15 @@ let default_context =
                                Int_t))
                   empty_context in
   let ctxt =
+    add_variables [">"; "<"]
+                  (Function_t ([Int_t; Int_t],
+                               Bool_t))
+                  ctxt in
+  let ctxt =
     add_variables ["and"; "or"]
                   (Function_t ([Bool_t; Bool_t],
                                Bool_t))
-                 ctxt in
+                  ctxt in
   add_binding "not"
               (Function_t ([Bool_t],
                            Bool_t))
@@ -69,6 +74,7 @@ let rec typeof e context =
          raise (TypeCheckFailure "Types of conditional branches don't match!")
      else
        raise (TypeCheckFailure "Condition not a boolean!")
+
 and typeof_application f args context =
   let arg_types = List.map (fun x -> typeof x context) args in
   match (typeof f context) with
@@ -78,6 +84,7 @@ and typeof_application f args context =
     else
       raise (TypeCheckFailure "Arg types did not match return type!")
   | _ -> raise (TypeCheckFailure "First expr in application not a function!")
+
 and typeof_abstraction args ret_type body context =
   let context = add_bindings args context in
   let body_type = typeof body context in
@@ -86,6 +93,7 @@ and typeof_abstraction args ret_type body context =
     Function_t (arg_types, ret_type)
   else
     raise (TypeCheckFailure "Declared/inferred function body type mismatch!")
+
 and typeof_let bindings body context =
   let rec check_let_bindings bindings context =
     match bindings with
@@ -99,6 +107,7 @@ and typeof_let bindings body context =
                     "Declared/inferred let binding type mismatch!")
   in
   typeof body (check_let_bindings bindings context)
+
 and typeof_letrec bindings body context =
   let rec add_letrec_bindings bindings context =
     match bindings with
