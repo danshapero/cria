@@ -18,6 +18,8 @@ open Expressions
 %token ARROW
 %token LPAREN
 %token RPAREN
+%token LBRACK
+%token RBRACK
 %token EOF
 %start <Expressions.expr option> prog
 
@@ -44,14 +46,14 @@ expr:
   ;
 
 sexpr:
-  | LAMBDA; LPAREN; args = var_decl_list; RPAREN; COLON; ret = data_type;
+  | LAMBDA; LBRACK; args = var_decl_list; RBRACK; COLON; ret = data_type;
       body = expr;
     { Abstraction (args, ret, body) }
   | f = expr; args = list(expr)
     { Application (f, args) }
-  | LET; LPAREN; bindings = var_binding_list; RPAREN; body = expr;
+  | LET; LBRACK; bindings = var_binding_list; RBRACK; body = expr;
     { Let (bindings, body) }
-  | LETREC; LPAREN; bindings = var_binding_list; RPAREN; body = expr;
+  | LETREC; LBRACK; bindings = var_binding_list; RBRACK; body = expr;
     { Letrec (bindings, body) }
   | IF; cond = expr; t_branch = expr; f_branch = expr
     { Conditional (cond, t_branch, f_branch) }

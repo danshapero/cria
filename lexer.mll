@@ -51,6 +51,8 @@ rule read =
   | id       { ID (Lexing.lexeme lexbuf) }
   | '('      { LPAREN }
   | ')'      { RPAREN }
+  | '['      { LBRACK }
+  | ']'      { RBRACK }
   | ':'      { COLON }
   | _ { raise (SyntaxError ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
   | eof      { EOF }
