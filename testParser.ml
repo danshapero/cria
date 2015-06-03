@@ -17,40 +17,34 @@ let test_fixture = "Expression parser" >:::
 [
   "atoms" >::
     ( fun () -> assert_equal (parse "1")
-                             (Constant (Int 1));
+                             (Const (Int 1));
                 assert_equal (parse "1.0")
-                             (Constant (Float 1.0));
+                             (Const (Float 1.0));
                 assert_equal (parse "4.0e9")
-                             (Constant (Float 4.0e9));
+                             (Const (Float 4.0e9));
                 assert_equal (parse "4.0E9")
-                             (Constant (Float 4.0e9));
+                             (Const (Float 4.0e9));
                 assert_equal (parse "true")
-                             (Constant (Bool true));
+                             (Const (Bool true));
                 assert_equal (parse "false")
-                             (Constant (Bool false))
+                             (Const (Bool false))
     );
 
   "variables" >::
     (
-      fun () -> assert_equal (parse "x")
-                             (Variable "x");
-                assert_equal (parse "+")
-                             (Variable "+");
-                assert_equal (parse "yes?")
-                             (Variable "yes?")
+      fun () -> assert_equal (parse "x") (Var "x");
+                assert_equal (parse "+") (Var "+");
+                assert_equal (parse "yes?") (Var "yes?")
     );
 
   "applications" >::
     (
       ( fun () ->
         assert_equal (parse "(f 0)")
-                     (Application (Variable "f",
-                                   [Constant (Int 0)]));
+                     (App (Var "f", [Const (Int 0)]));
         assert_equal (parse "(g x y 0)")
-                     (Application (Variable "g",
-                                   [Variable "x";
-                                    Variable "y";
-                                    Constant (Int 0)]));
+                      (App (Var "g",
+                            [Var "x"; Var "y"; Const (Int 0)]));
       )
     );
 
@@ -58,11 +52,10 @@ let test_fixture = "Expression parser" >:::
     (
       ( fun () ->
         assert_equal (parse "(lambda [x:int]:int (+ x 1))")
-                     (Abstraction ([("x", Int_t)],
-                                   Int_t,
-                                   (Application (Variable "+",
-                                                 [Variable "x";
-                                                  Constant (Int 1)]))));
+                     (Abs ([("x", Int_t)],
+                           Int_t,
+                           (App (Var "+",
+                                 [Var "x"; Const (Int 1)]))));
         assert_raises Parser.Error
                       (fun () -> parse "(lambda [x:int] (+ x 1))");
         assert_raises Parser.Error
@@ -76,9 +69,7 @@ let test_fixture = "Expression parser" >:::
     (
       ( fun () ->
         assert_equal (parse "(if b 0 1)")
-                     (Conditional (Variable "b",
-                                   Constant (Int 0),
-                                   Constant (Int 1)));
+                     (Cond (Var "b", Const (Int 0), Const (Int 1)));
         assert_raises Parser.Error
                       (fun () -> parse "(if b 0)");
       )
@@ -87,16 +78,16 @@ let test_fixture = "Expression parser" >:::
   "let" >::
     ( fun () ->
       assert_equal (parse "(let [x:int 1] (+ x 2))")
-                   (Let (["x", Int_t, Constant (Int 1)],
-                         Application (Variable "+",
-                                      [Variable "x"; Constant (Int 2)])));
+                   (Let (["x", Int_t, Const (Int 1)],
+                         App (Var "+",
+                              [Var "x"; Const (Int 2)])));
       assert_raises Parser.Error
                     (fun () -> parse "(let [x 1] (+ x 2))");
       assert_equal (parse "(let [x:int 613  y:int 42] (lcm x y))")
-                   (Let (["x", Int_t, Constant (Int 613);
-                          "y", Int_t, Constant (Int 42)],
-                         Application (Variable "lcm",
-                                      [Variable "x"; Variable "y"])));
+                   (Let (["x", Int_t, Const (Int 613);
+                          "y", Int_t, Const (Int 42)],
+                         App (Var "lcm",
+                              [Var "x"; Var "y"])));
       let factorial_code =
         "(letrec [fact:(int int -> int)
                     (lambda [n:int f:int]:int
@@ -108,25 +99,21 @@ let test_fixture = "Expression parser" >:::
       assert_equal (parse factorial_code)
                    (Letrec (["fact",
                              Function_t ([Int_t; Int_t], Int_t),
-                             Abstraction
+                             Abs
                                (["n", Int_t;
                                  "f", Int_t],
                                 Int_t,
-                                Conditional
-                                  (Application (Variable "=",
-                                                [Variable "n";
-                                                 Constant (Int 0)]),
-                                   Variable "f",
-                                   Application (Variable "fact",
-                                                [Application (Variable "-",
-                                                              [Variable "n";
-                                                               Constant (Int 1)]);
-                                                 Application (Variable "*",
-                                                              [Variable "n";
-                                                               Variable "f"])])))],
-                            Application (Variable "fact",
-                                         [Constant (Int 5);
-                                          Constant (Int 1)])))
+                                Cond
+                                  (App (Var "=",
+                                        [Var "n"; Const (Int 0)]),
+                                   Var "f",
+                                   App (Var "fact",
+                                        [App (Var "-",
+                                              [Var "n"; Const (Int 1)]);
+                                         App (Var "*",
+                                              [Var "n"; Var "f"])])))],
+                            App (Var "fact",
+                                 [Const (Int 5); Const (Int 1)])))
     )
 
 ]

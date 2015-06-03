@@ -13,13 +13,13 @@ type data_type = Bool_t
                | Function_t of (data_type list) * data_type
 
 type expr =
-    | Constant of constant
-    | Variable of variable
-    | Application of expr * expr list
-    | Abstraction of (variable * data_type) list * data_type * expr
+    | Const of constant
+    | Var of variable
+    | App of expr * expr list
+    | Abs of (variable * data_type) list * data_type * expr
     | Let of (variable * data_type * expr) list * expr
     | Letrec of (variable * data_type * expr) list * expr
-    | Conditional of (expr * expr * expr)
+    | Cond of (expr * expr * expr)
 
 
 let string_of_constant c =
@@ -51,15 +51,15 @@ let rec string_of_expr expr =
     name ^ ":" ^ (string_of_data_type ty)
   in
   match expr with
-    | Constant c ->
+    | Const c ->
        string_of_constant c
-    | Variable v ->
+    | Var v ->
        v
-    | Application (f, args) ->
+    | App (f, args) ->
        let func = string_of_expr f
        and args = List.map string_of_expr args in
        "(" ^ func ^ " " ^ (String.concat " " args) ^ ")"
-    | Abstraction (args, ret, body) ->
+    | Abs (args, ret, body) ->
        let args = List.map string_of_arg_decl args
        and ret  = string_of_data_type ret
        and body = string_of_expr body in
@@ -72,7 +72,7 @@ let rec string_of_expr expr =
        let bindings = List.map string_of_binding bindings
        and body     = string_of_expr body in
        "(letrec (" ^ (String.concat " " bindings) ^ ") " ^ body ^ ")"
-    | Conditional (cond, t, f) ->
+    | Cond (cond, t, f) ->
        "(if " ^ (string_of_expr cond) ^ " "
        ^ (string_of_expr t) ^ " "
        ^ (string_of_expr f) ^ ")"

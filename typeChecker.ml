@@ -58,13 +58,13 @@ let typeof_variable x context =
 
 let rec typeof e context =
   match e with
-  | Constant a -> typeof_constant a
-  | Variable x -> typeof_variable x context
-  | Application (f, args) -> typeof_application f args context
-  | Abstraction (args, ret_type, body) -> typeof_abstraction args ret_type body context
-  | Let (bindings, body) -> typeof_let bindings body context
-  | Letrec (bindings, body) -> typeof_letrec bindings body context
-  | Conditional (condition, true_branch, false_branch) ->
+  | Const a                    -> typeof_constant a
+  | Var x                      -> typeof_variable x context
+  | App (f, args)              -> typeof_application f args context
+  | Abs (args, ret_type, body) -> typeof_abstraction args ret_type body context
+  | Let (bindings, body)       -> typeof_let bindings body context
+  | Letrec (bindings, body)    -> typeof_letrec bindings body context
+  | Cond (condition, true_branch, false_branch) ->
      if (typeof condition context) = Bool_t then
        let t_true_branch = typeof true_branch context
        and t_false_branch = typeof false_branch context in

@@ -39,24 +39,24 @@ data_type:
 
 expr:
   | LPAREN; e = sexpr; RPAREN  { e }
-  | i = INT                    { Constant (Int i) }
-  | x = FLOAT                  { Constant (Float x) }
-  | p = BOOL                   { Constant (Bool p) }
-  | s = ID                     { Variable s }
+  | i = INT                    { Const (Int i) }
+  | x = FLOAT                  { Const (Float x) }
+  | p = BOOL                   { Const (Bool p) }
+  | s = ID                     { Var s }
   ;
 
 sexpr:
   | LAMBDA; LBRACK; args = var_decl_list; RBRACK; COLON; ret = data_type;
       body = expr;
-    { Abstraction (args, ret, body) }
+    { Abs (args, ret, body) }
   | f = expr; args = list(expr)
-    { Application (f, args) }
+    { App (f, args) }
   | LET; LBRACK; bindings = var_binding_list; RBRACK; body = expr;
     { Let (bindings, body) }
   | LETREC; LBRACK; bindings = var_binding_list; RBRACK; body = expr;
     { Letrec (bindings, body) }
   | IF; cond = expr; t_branch = expr; f_branch = expr
-    { Conditional (cond, t_branch, f_branch) }
+    { Cond (cond, t_branch, f_branch) }
   ;
 
 var_decl_list:
