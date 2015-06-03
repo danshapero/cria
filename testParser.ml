@@ -62,7 +62,13 @@ let test_fixture = "Expression parser" >:::
                                    Int_t,
                                    (Application (Variable "+",
                                                  [Variable "x";
-                                                  Constant (Int 1)]))))
+                                                  Constant (Int 1)]))));
+        assert_raises Parser.Error
+                      (fun () -> parse "(lambda [x:int] (+ x 1))");
+        assert_raises Parser.Error
+                      (fun () -> parse "(lambda [x]:int (+ x 1))");
+        assert_raises Parser.Error
+                      (fun () -> parse "(lambda [x:int]:int)")
       )
     );
 
@@ -72,9 +78,21 @@ let test_fixture = "Expression parser" >:::
         assert_equal (parse "(if b 0 1)")
                      (Conditional (Variable "b",
                                    Constant (Int 0),
-                                   Constant (Int 1)))
+                                   Constant (Int 1)));
+        assert_raises Parser.Error
+                      (fun () -> parse "(if b 0)");
       )
     );
+
+  "let" >::
+    ( fun () ->
+      assert_equal (parse "(let [x:int 1] (+ x 2))")
+                   (Let (["x", Int_t, Constant (Int 1)],
+                         Application (Variable "+",
+                                      [Variable "x";
+                                       Constant (Int 2)])))
+
+    )
 
 ]
 
