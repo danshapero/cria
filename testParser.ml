@@ -89,9 +89,44 @@ let test_fixture = "Expression parser" >:::
       assert_equal (parse "(let [x:int 1] (+ x 2))")
                    (Let (["x", Int_t, Constant (Int 1)],
                          Application (Variable "+",
-                                      [Variable "x";
-                                       Constant (Int 2)])))
-
+                                      [Variable "x"; Constant (Int 2)])));
+      assert_raises Parser.Error
+                    (fun () -> parse "(let [x 1] (+ x 2))");
+      assert_equal (parse "(let [x:int 613  y:int 42] (lcm x y))")
+                   (Let (["x", Int_t, Constant (Int 613);
+                          "y", Int_t, Constant (Int 42)],
+                         Application (Variable "lcm",
+                                      [Variable "x"; Variable "y"])));
+      let factorial_code =
+        "(letrec [fact:(int int -> int)
+                    (lambda [n:int f:int]:int
+                            (if (= n 0)
+                                f
+                                (fact (- n 1) (* n f))))]
+           (fact 5 1))"
+      in
+      assert_equal (parse factorial_code)
+                   (Letrec (["fact",
+                             Function_t ([Int_t; Int_t], Int_t),
+                             Abstraction
+                               (["n", Int_t;
+                                 "f", Int_t],
+                                Int_t,
+                                Conditional
+                                  (Application (Variable "=",
+                                                [Variable "n";
+                                                 Constant (Int 0)]),
+                                   Variable "f",
+                                   Application (Variable "fact",
+                                                [Application (Variable "-",
+                                                              [Variable "n";
+                                                               Constant (Int 1)]);
+                                                 Application (Variable "*",
+                                                              [Variable "n";
+                                                               Variable "f"])])))],
+                            Application (Variable "fact",
+                                         [Constant (Int 5);
+                                          Constant (Int 1)])))
     )
 
 ]
