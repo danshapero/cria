@@ -42,37 +42,46 @@ let rec string_of_data_type t =
        in
        "(-> " ^ args_string ^ " " ^ ret_string ^ ")"
 
+let indent i = String.make i ' '
 
-let rec string_of_expr expr =
+let rec string_of_expr level expr =
   let string_of_binding (name, ty, expr) =
-    name ^ ":" ^ (string_of_data_type ty) ^ " " ^ (string_of_expr expr)
-  in
-  let string_of_arg_decl (name, ty) =
+    name ^ ":" ^ (string_of_data_type ty) ^ (string_of_expr 1 expr)
+  and string_of_arg_decl (name, ty) =
     name ^ ":" ^ (string_of_data_type ty)
   in
+  (indent level) ^
   match expr with
-    | Const c ->
-       string_of_constant c
-    | Var v ->
-       v
-    | App (f, args) ->
-       let func = string_of_expr f
-       and args = List.map string_of_expr args in
-       "(" ^ func ^ " " ^ (String.concat " " args) ^ ")"
-    | Abs (args, ret, body) ->
-       let args = List.map string_of_arg_decl args
-       and ret  = string_of_data_type ret
-       and body = string_of_expr body in
-       "(lambda (" ^ (String.concat " " args) ^ "):" ^ ret ^ " " ^ body ^ ")"
-    | Let (bindings, body) ->
-       let bindings = List.map string_of_binding bindings
-       and body     = string_of_expr body in
-       "(let (" ^ (String.concat " " bindings) ^ ") " ^ body ^ ")"
-    | Letrec (bindings, body) ->
-       let bindings = List.map string_of_binding bindings
-       and body     = string_of_expr body in
-       "(letrec (" ^ (String.concat " " bindings) ^ ") " ^ body ^ ")"
-    | Cond (cond, t, f) ->
-       "(if " ^ (string_of_expr cond) ^ " "
-       ^ (string_of_expr t) ^ " "
-       ^ (string_of_expr f) ^ ")"
+  | Const c ->
+    string_of_constant c
+  | Var v ->
+    v
+  | App (f, args) ->
+    let f = string_of_expr 0 f in
+    let level = level + (String.length f) + 2 in
+    let args = List.map (string_of_expr 0) args in
+    "(" ^ f ^ " " ^ (String.concat ("\n" ^ (indent level)) args) ^ ")"
+  | Abs (args, ret, body) ->
+    let args = List.map string_of_arg_decl args
+    and ret  = string_of_data_type ret in
+    let decl = "(lambda [" ^ (String.concat " " args) ^ "]:" ^ ret in
+    let level = level + (String.length "(lambda ") in
+    let body = string_of_expr level body in
+    decl ^ "\n" ^ body ^ ")"
+  | Let (bindings, body) ->
+    let bindings = List.map string_of_binding bindings
+    and binding_level = level + (String.length "(let [") in
+    let separator = "\n" ^ (indent binding_level) in
+    let decl = "(let [" ^ (String.concat separator bindings) ^ "]" in
+    decl ^ "\n" ^ (string_of_expr (level + (String.length "(let ")) body) ^ ")"
+  | Letrec (bindings, body) ->
+    let bindings = List.map string_of_binding bindings
+    and binding_level = level + (String.length "(letrec [") in
+    let separator = "\n" ^ (indent binding_level) in
+    let decl = "(letrec [" ^ (String.concat separator bindings) ^ "]" in
+    decl ^ "\n" ^ (string_of_expr (level + (String.length "(letrec ")) body) ^ ")"
+  | Cond (cond, t, f) ->
+    let level = level + 4 in
+    "(if " ^ (string_of_expr 0 cond) ^ "\n"
+    ^ (string_of_expr level t) ^ "\n"
+    ^ (string_of_expr level f) ^ ")"

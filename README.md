@@ -4,9 +4,9 @@ Goofing about with LLVM. How the hell else am I going to learn it?
 
 Dependencies
 ============
-* [opam[(https://opam.ocaml.org/doc/Install.html). Linux users: don't install it from the package manager, use their installer script.
+* [opam](https://opam.ocaml.org/doc/Install.html). Linux users: don't install it from the package manager, use their installer script.
 * OCaml 4.0+. opam will install an OCaml compiler for you.
-* OCaml libraries: Menhir, Core. Installable with opam.
+* OCaml libraries: Menhir, Core, OUnit. Installable with opam.
 * LLVM 3.4+
 
 
