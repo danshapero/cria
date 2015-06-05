@@ -4,6 +4,7 @@ open Expressions
 open Lexer
 open Lexing
 open TypeChecker
+open DefaultTypeContext
 
 exception ParseFail of string;;
 

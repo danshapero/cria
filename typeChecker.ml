@@ -24,27 +24,6 @@ let rec add_bindings bindings context =
   | [] -> context
   | (x, t) :: bindings -> add_bindings bindings (add_binding x t context)
 
-let default_context =
-  let ctxt =
-    add_variables ["+"; "-"; "*"; "/"]
-                  (Function_t ([Int_t; Int_t],
-                               Int_t))
-                  empty_context in
-  let ctxt =
-    add_variables [">"; "<"]
-                  (Function_t ([Int_t; Int_t],
-                               Bool_t))
-                  ctxt in
-  let ctxt =
-    add_variables ["and"; "or"]
-                  (Function_t ([Bool_t; Bool_t],
-                               Bool_t))
-                  ctxt in
-  add_binding "not"
-              (Function_t ([Bool_t],
-                           Bool_t))
-              ctxt
-
 
 let typeof_constant a =
   match a with
@@ -54,7 +33,6 @@ let typeof_constant a =
 
 let typeof_variable x context =
   StringMap.find x context
-
 
 let rec typeof e context =
   match e with

@@ -1,2 +1,2 @@
 
-<*.ml> or "testTypeChecker.native": package(oUnit)
+<*.ml> or "testTypeChecker.native" or "testParser.native": package(oUnit)
