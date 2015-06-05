@@ -18,7 +18,9 @@ let () =
   let es1 = string_of_expr 0 (parse "(f (+ x 1) (* y 3))") in
   let es2 = string_of_expr 0 (parse "(lambda [x:int]:int (+ x 1))") in
   let es3 = string_of_expr 0 (parse "(let [x:int 1] (+ x 3 9 (* x 12)))") in
+  let es4 = string_of_expr 0 (parse "(let [x:int 63  y:int 42] (gcd x y))") in
   print_endline es0;
   print_endline es1;
   print_endline es2;
   print_endline es3;
+  print_endline es4;

@@ -58,14 +58,13 @@ let rec string_of_expr level expr =
     v
   | App (f, args) ->
     let f = string_of_expr 0 f in
-    let level = level + (String.length f) + 2 in
     let args = List.map (string_of_expr 0) args in
-    "(" ^ f ^ " " ^ (String.concat ("\n" ^ (indent level)) args) ^ ")"
+    "(" ^ f ^ " " ^ (String.concat " " args) ^ ")"
   | Abs (args, ret, body) ->
     let args = List.map string_of_arg_decl args
     and ret  = string_of_data_type ret in
     let decl = "(lambda [" ^ (String.concat " " args) ^ "]:" ^ ret in
-    let level = level + (String.length "(lambda ") in
+    let level = level + 2 in
     let body = string_of_expr level body in
     decl ^ "\n" ^ body ^ ")"
   | Let (bindings, body) ->
@@ -73,7 +72,7 @@ let rec string_of_expr level expr =
     and binding_level = level + (String.length "(let [") in
     let separator = "\n" ^ (indent binding_level) in
     let decl = "(let [" ^ (String.concat separator bindings) ^ "]" in
-    decl ^ "\n" ^ (string_of_expr (level + (String.length "(let ")) body) ^ ")"
+    decl ^ "\n" ^ (string_of_expr (level + 2) body) ^ ")"
   | Letrec (bindings, body) ->
     let bindings = List.map string_of_binding bindings
     and binding_level = level + (String.length "(letrec [") in

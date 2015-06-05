@@ -2,4 +2,7 @@
 # Structure of OLlama
 S ./
 
+EXT ounit
+PKG ounit
+
 B _build
