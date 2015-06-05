@@ -20,6 +20,7 @@ type expr =
     | Let of (variable * data_type * expr) list * expr
     | Letrec of (variable * data_type * expr) list * expr
     | Cond of (expr * expr * expr)
+    | Def of (variable * expr)
 
 
 let string_of_constant c =
@@ -84,3 +85,5 @@ let rec string_of_expr level expr =
     "(if " ^ (string_of_expr 0 cond) ^ "\n"
     ^ (string_of_expr level t) ^ "\n"
     ^ (string_of_expr level f) ^ ")"
+  | Def (var, e) ->
+    "(def " ^ var ^ "\n" ^ (string_of_expr (level + 2) e)

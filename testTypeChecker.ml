@@ -32,6 +32,9 @@ let test_fixture = "TypeChecker" >:::
                            empty_context);
       assert_equal (Function_t ([Int_t; Int_t], Int_t))
                    (typeof (parse "(lambda [x:int y:int]:int (+ x y))")
+                           default_context);
+      assert_equal (Function_t ([Int_t; Int_t], Bool_t))
+                   (typeof (parse "(lambda [x:int y:int]:bool (= (% x y) 0))")
                            default_context)
     );
 
@@ -66,6 +69,14 @@ let test_fixture = "TypeChecker" >:::
                       (parse "(lambda [x:int]:int (* (if (> x 0) 1 -1) x))")
                       default_context)
     );
+
+  "defines" >::
+    ( fun () ->
+      assert_equal (Function_t ([Int_t; Int_t], Bool_t))
+                   (typeof
+                      (parse "(def divides? (lambda [x:int y:int]:bool (= (% x y) 0)))")
+                      default_context)
+    )
 ]
 
 let _ = run_test_tt_main test_fixture

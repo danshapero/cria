@@ -8,6 +8,7 @@ open Expressions
 %token <bool> BOOL
 %token <string> ID
 %token COLON
+%token DEF
 %token LAMBDA
 %token LET
 %token LETREC
@@ -46,6 +47,8 @@ expr:
   ;
 
 sexpr:
+  | DEF; var = ID; e = expr;
+    { Def (var, e) }
   | LAMBDA; LBRACK; args = var_decl_list; RBRACK; COLON; ret = data_type;
       body = expr;
     { Abs (args, ret, body) }

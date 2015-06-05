@@ -114,6 +114,17 @@ let test_fixture = "Expression parser" >:::
                                               [Var "n"; Var "f"])])))],
                             App (Var "fact",
                                  [Const (Int 5); Const (Int 1)])))
+    );
+
+  "defines" >::
+    ( fun () ->
+      assert_equal (parse "(def x 1)")
+                   (Def ("x", Const (Int 1)));
+      assert_equal (parse "(def inc (lambda [x:int]:int (+ x 1)))")
+                   (Def ("inc", Abs (["x", Int_t],
+                                     Int_t,
+                                     App (Var "+",
+                                          [Var "x"; Const (Int 1)]))))
     )
 
 ]
