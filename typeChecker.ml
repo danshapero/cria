@@ -27,21 +27,21 @@ let rec add_bindings bindings context =
 
 let typeof_constant a =
   match a with
-  | Int _ -> Int_t
+  | Int _   -> Int_t
   | Float _ -> Float_t
-  | Bool _ -> Bool_t
+  | Bool _  -> Bool_t
 
 let typeof_variable x context =
   StringMap.find x context
 
 let rec typeof e context =
   match e with
-  | Const a                    -> typeof_constant a
-  | Var x                      -> typeof_variable x context
-  | App (f, args)              -> typeof_application f args context
-  | Abs (args, ret_type, body) -> typeof_abstraction args ret_type body context
-  | Let (bindings, body)       -> typeof_let bindings body context
-  | Letrec (bindings, body)    -> typeof_letrec bindings body context
+  | Const a              -> typeof_constant a
+  | Var x                -> typeof_variable x context
+  | App (f, args)        -> typeof_application f args context
+  | Abs (args, body)     -> typeof_abstraction args body context
+  | Let (bindings, body) -> typeof_let bindings body context
+  | Fix f                -> typeof_fix f context
   | Cond (condition, true_branch, false_branch) ->
      if (typeof condition context) = Bool_t then
        let t_true_branch = typeof true_branch context
@@ -65,47 +65,26 @@ and typeof_application f args context =
       raise (TypeCheckFailure "Arg types did not match return type!")
   | _ -> raise (TypeCheckFailure "First expr in application not a function!")
 
-and typeof_abstraction args ret_type body context =
-  let context = add_bindings args context in
+and typeof_abstraction args body context =
+  let context = add_bindings args context
+  and arg_types = List.map (fun p -> snd p) args in
   let body_type = typeof body context in
-  if body_type = ret_type then
-    let arg_types = List.map (fun p -> snd p) args in
-    Function_t (arg_types, ret_type)
-  else
-    raise (TypeCheckFailure "Declared/inferred function body type mismatch!")
+  Function_t (arg_types, body_type)
 
 and typeof_let bindings body context =
-  let rec check_let_bindings bindings context =
-    match bindings with
-    | [] -> context
-    | (x, t, e) :: bindings
-      -> let context = add_binding x t context in
-         if (typeof e context) = t then
-           check_let_bindings bindings context
-         else
-           raise (TypeCheckFailure
-                    "Declared/inferred let binding type mismatch!")
+  let context' = List.fold_left
+                   (fun ctxt (x, e) -> add_binding x (typeof e context) ctxt)
+                   context
+                   bindings
   in
-  typeof body (check_let_bindings bindings context)
+  typeof body context'
 
-and typeof_letrec bindings body context =
-  let rec add_letrec_bindings bindings context =
-    match bindings with
-    | [] -> context
-    | (x, t, _) :: bindings
-      -> add_letrec_bindings bindings (add_binding x t context)
-  and check_letrec_bindings bindings context =
-    match bindings with
-    | [] -> true
-    | (_, t, e) :: bindings
-      -> if (typeof e context) = t then
-           check_letrec_bindings bindings context
-         else
-           false
-  in
-  let context = add_letrec_bindings bindings context in
-  if check_letrec_bindings bindings context then
-    typeof body context
-  else
-    raise (TypeCheckFailure
-             "Declared/inferred letrec binding type mismatch!")
+and typeof_fix f context =
+  match typeof f context with
+  | Function_t ([arg], ret) ->
+     if arg = ret then
+       ret
+     else
+       raise (TypeCheckFailure
+                "Arg/return types of function passed to Fix do not match.")
+  | _ -> raise (TypeCheckFailure "Argument to fix is not a function!")
