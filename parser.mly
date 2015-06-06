@@ -1,5 +1,6 @@
 
 %{
+open DataTypes
 open Expressions
 %}
 
@@ -39,6 +40,7 @@ data_type:
   ;
 
 expr:
+  | LPAREN; RPAREN             { Const Nil }
   | LPAREN; e = sexpr; RPAREN  { e }
   | i = INT                    { Const (Int i) }
   | x = FLOAT                  { Const (Float x) }

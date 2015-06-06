@@ -28,9 +28,10 @@ let rec add_bindings bindings context =
 
 let typeof_constant a =
   match a with
-  | Int _   -> Int_t
+  | Nil -> Nil_t
+  | Int _ -> Int_t
   | Float _ -> Float_t
-  | Bool _  -> Bool_t
+  | Bool _ -> Bool_t
 
 let typeof_variable x context =
   StringMap.find x context
