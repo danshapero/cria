@@ -11,7 +11,7 @@ open Expressions
 %token DEF
 %token LAMBDA
 %token LET
-%token LETREC
+%token FIX
 %token IF
 %token BOOL_T
 %token INT_T
@@ -49,15 +49,14 @@ expr:
 sexpr:
   | DEF; var = ID; e = expr;
     { Def (var, e) }
-  | LAMBDA; LBRACK; args = var_decl_list; RBRACK; COLON; ret = data_type;
-      body = expr;
-    { Abs (args, ret, body) }
+  | LAMBDA; LBRACK; args = var_decl_list; RBRACK; body = expr;
+    { Abs (args, body) }
   | f = expr; args = list(expr)
     { App (f, args) }
   | LET; LBRACK; bindings = var_binding_list; RBRACK; body = expr;
     { Let (bindings, body) }
-  | LETREC; LBRACK; bindings = var_binding_list; RBRACK; body = expr;
-    { Letrec (bindings, body) }
+  | FIX; f = expr;
+    { Fix f }
   | IF; cond = expr; t_branch = expr; f_branch = expr
     { Cond (cond, t_branch, f_branch) }
   ;
@@ -78,6 +77,6 @@ var_binding_list:
   ;
 
 var_binding:
-  x = ID; COLON; t = data_type; e = expr
-  { (x, t, e) }
+  x = ID; e = expr
+  { (x, e) }
   ;

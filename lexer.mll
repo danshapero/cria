@@ -43,7 +43,7 @@ rule read =
   | "def"    { DEF }
   | "lambda" { LAMBDA }
   | "let"    { LET }
-  | "letrec" { LETREC }
+  | "fix"    { FIX }
   | "if"     { IF }
   | "bool"   { BOOL_T }
   | "int"    { INT_T }

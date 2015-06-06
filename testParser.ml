@@ -51,17 +51,14 @@ let test_fixture = "Expression parser" >:::
   "abstractions" >::
     (
       ( fun () ->
-        assert_equal (parse "(lambda [x:int]:int (+ x 1))")
+        assert_equal (parse "(lambda [x:int] (+ x 1))")
                      (Abs ([("x", Int_t)],
-                           Int_t,
                            (App (Var "+",
                                  [Var "x"; Const (Int 1)]))));
         assert_raises Parser.Error
-                      (fun () -> parse "(lambda [x:int] (+ x 1))");
-        assert_raises Parser.Error
                       (fun () -> parse "(lambda [x]:int (+ x 1))");
         assert_raises Parser.Error
-                      (fun () -> parse "(lambda [x:int]:int)")
+                      (fun () -> parse "(lambda [x:int])")
       )
     );
 
@@ -77,52 +74,49 @@ let test_fixture = "Expression parser" >:::
 
   "let" >::
     ( fun () ->
-      assert_equal (parse "(let [x:int 1] (+ x 2))")
-                   (Let (["x", Int_t, Const (Int 1)],
+      assert_equal (parse "(let [x 1] (+ x 2))")
+                   (Let (["x", Const (Int 1)],
                          App (Var "+",
                               [Var "x"; Const (Int 2)])));
-      assert_raises Parser.Error
-                    (fun () -> parse "(let [x 1] (+ x 2))");
-      assert_equal (parse "(let [x:int 613  y:int 42] (lcm x y))")
-                   (Let (["x", Int_t, Const (Int 613);
-                          "y", Int_t, Const (Int 42)],
+      assert_equal (parse "(let [x 613  y 42] (lcm x y))")
+                   (Let (["x", Const (Int 613);
+                          "y", Const (Int 42)],
                          App (Var "lcm",
                               [Var "x"; Var "y"])));
+
+    );
+
+  "fix" >::
+    ( fun () ->
       let factorial_code =
-        "(letrec [fact:(int int -> int)
-                    (lambda [n:int f:int]:int
-                            (if (= n 0)
-                                f
-                                (fact (- n 1) (* n f))))]
-           (fact 5 1))"
+        "(fix (lambda [fact:(int int -> int)]
+                (lambda [n:int f:int]
+                  (if (= n 0)
+                      f
+                      (fact (- n 1) (* n f))))))"
       in
       assert_equal (parse factorial_code)
-                   (Letrec (["fact",
-                             Function_t ([Int_t; Int_t], Int_t),
-                             Abs
-                               (["n", Int_t;
-                                 "f", Int_t],
-                                Int_t,
-                                Cond
-                                  (App (Var "=",
-                                        [Var "n"; Const (Int 0)]),
-                                   Var "f",
-                                   App (Var "fact",
-                                        [App (Var "-",
-                                              [Var "n"; Const (Int 1)]);
-                                         App (Var "*",
-                                              [Var "n"; Var "f"])])))],
-                            App (Var "fact",
-                                 [Const (Int 5); Const (Int 1)])))
+                   (Fix (Abs (["fact", Function_t ([Int_t; Int_t], Int_t)],
+                              (Abs (["n", Int_t; "f", Int_t],
+                                    Cond (App (Var "=",
+                                               [Var "n";
+                                                Const (Int 0)]),
+                                          Var "f",
+                                          App (Var "fact",
+                                               [App (Var "-",
+                                                     [Var "n";
+                                                      Const (Int 1)]);
+                                                App (Var "*",
+                                                     [Var "n";
+                                                      Var "f"])])))))))
     );
 
   "defines" >::
     ( fun () ->
       assert_equal (parse "(def x 1)")
                    (Def ("x", Const (Int 1)));
-      assert_equal (parse "(def inc (lambda [x:int]:int (+ x 1)))")
+      assert_equal (parse "(def inc (lambda [x:int] (+ x 1)))")
                    (Def ("inc", Abs (["x", Int_t],
-                                     Int_t,
                                      App (Var "+",
                                           [Var "x"; Const (Int 1)]))))
     )
