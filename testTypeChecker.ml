@@ -1,5 +1,6 @@
 
 open OUnit
+open DataTypes
 open Expressions
 open Lexer
 open Lexing

@@ -1,16 +1,12 @@
 
+open DataTypes
+
 type variable = string
 
 type constant =
     | Int of int
     | Float of float
     | Bool of bool
-
-
-type data_type = Bool_t
-               | Int_t
-               | Float_t
-               | Function_t of (data_type list) * data_type
 
 type expr =
     | Const of constant
@@ -28,20 +24,6 @@ let string_of_constant c =
   | Int i   -> string_of_int i
   | Float x -> string_of_float x
   | Bool p  -> string_of_bool p
-
-
-let rec string_of_data_type t =
-  match t with
-    | Bool_t                 -> "bool"
-    | Int_t                  -> "int"
-    | Float_t                -> "float"
-    | Function_t (args, ret) ->
-       let args_string =
-         String.concat " " (List.map string_of_data_type args)
-       and ret_string =
-         string_of_data_type ret
-       in
-       "(-> " ^ args_string ^ " " ^ ret_string ^ ")"
 
 let indent i = String.make i ' '
 

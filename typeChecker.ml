@@ -1,4 +1,5 @@
 
+open DataTypes
 open Expressions
 
 exception TypeCheckFailure of string;;
