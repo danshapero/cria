@@ -14,6 +14,13 @@ let parse s =
 
 
 let () =
-  let e1 = (parse "(if b 0 1)") in
-  let s1 = string_of_expr 0 (normalize e1) in
-  print_endline s1;
+  let expressions = ["(if b 0 1)";
+                     "(* (if (> x 0) 1 -1) x)";
+                     "(lambda [x:int y:int] (= (% x y) 0))";
+                     "(lambda [p:int]
+                        (lambda [k:int] (= (% k p) 0)))"]
+  in
+  let parsed_expressions = List.map parse expressions in
+  let normalized_expressions = List.map normalize parsed_expressions in
+  let expression_strings = List.map (string_of_expr 0) normalized_expressions in
+  List.iter print_endline expression_strings;
