@@ -24,18 +24,15 @@ let rec normalize term =
   | App (f, args)
     -> normalize_name f (fun f->
         normalize_names args (fun args -> App (f, args)))
-  (*-> normalize_name f (fun t -> normalize_names args (fun ts -> t :: ts))*)
   | Abs (args, body) -> Abs (args, normalize body)
-  | Let (bindings, body) -> normalize_let bindings body
+  | Let ([], body) -> normalize body
+  | Let ((x, e) :: bindings, body) ->
+    Let ([x, normalize e], normalize (Let(bindings, body)))
   | Fix f -> Fix (normalize f)
   | Cond (cond, t, f) -> normalize_name cond
                            (fun c ->
                               Cond (c, normalize t, normalize f))
   | Def (var, e) -> Def (var, normalize e)
-and normalize_let bindings body =
-  match bindings with
-  | [] -> normalize body
-  | (x, e) :: bindings -> normalize_let ((x, normalize e) :: bindings) body
 and normalize_name term k =
   if (atomic term) then
     k term

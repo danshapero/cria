@@ -18,7 +18,11 @@ let () =
                      "(* (if (> x 0) 1 -1) x)";
                      "(lambda [x:int y:int] (= (% x y) 0))";
                      "(lambda [p:int]
-                        (lambda [k:int] (= (% k p) 0)))"]
+                        (lambda [k:int] (= (% k p) 0)))";
+                     "(let [x 3] (+ x 4))";
+                     "(let [x (f (g 0) (k 86))
+                            y (% (+ k 1) p)]
+                        (/ x y))"]
   in
   let parsed_expressions = List.map parse expressions in
   let normalized_expressions = List.map normalize parsed_expressions in
