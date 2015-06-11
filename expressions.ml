@@ -34,13 +34,14 @@ exception PrettyPrintFail;;
 let string_of_expr expr =
   let rec string_of_expr expr (k:string->string) =
     match expr with
-    | Const c -> string_of_constant c
-    | Var v -> v
+    | Const c -> (k (string_of_constant c))
+    | Var v -> (k v)
     | App (f, args) -> raise PrettyPrintFail
     | Abs (args, body) -> raise PrettyPrintFail
     | Let (bindings, body) -> raise PrettyPrintFail
     | Fix f -> raise PrettyPrintFail
     | Cond (cond, t, f) -> raise PrettyPrintFail
-    | Def (var, e) -> raise PrettyPrintFail
+    | Def (var, e) ->
+       (k (string_of_expr e (fun s -> "(def " ^ var ^ " " ^ s ^ ")")))
   in
   string_of_expr expr (fun s -> s)
