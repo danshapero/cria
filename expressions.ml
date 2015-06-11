@@ -39,10 +39,13 @@ let rec string_of_expr level expr =
   match expr with
   | Const c -> string_of_constant c
   | Var v -> v
-  | App (f, args) ->
+  | App (f, []) -> "(" ^ string_of_expr 0 f ^ ")"
+  | App (f, x :: args) ->
      let f = string_of_expr 0 f in
-     let args = List.map (string_of_expr 0) args in
-     "(" ^ f ^ " " ^ (String.concat " " args) ^ ")"
+     let x = string_of_expr 0 x in
+     let level = 2 + level + String.length f in
+     let args = List.map (string_of_expr level) args in
+     "(" ^ f ^ " " ^ x ^ "\n" ^ (String.concat "\n" args) ^ ")"
   | Abs (args, body) ->
      let args = List.map string_of_arg_decl args in
      let decl = "(lambda [" ^ (String.concat " " args) ^ "]" in
