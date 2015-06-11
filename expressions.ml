@@ -29,39 +29,18 @@ let string_of_constant c =
 
 let indent i = String.make i ' '
 
-let rec string_of_expr level expr =
-  let string_of_binding (name, expr) =
-    name ^ " " ^ (string_of_expr 1 expr)
-  and string_of_arg_decl (name, t) =
-    name ^ ":" ^ (string_of_data_type t)
+exception PrettyPrintFail;;
+
+let string_of_expr expr =
+  let rec string_of_expr expr (k:string->string) =
+    match expr with
+    | Const c -> string_of_constant c
+    | Var v -> v
+    | App (f, args) -> raise PrettyPrintFail
+    | Abs (args, body) -> raise PrettyPrintFail
+    | Let (bindings, body) -> raise PrettyPrintFail
+    | Fix f -> raise PrettyPrintFail
+    | Cond (cond, t, f) -> raise PrettyPrintFail
+    | Def (var, e) -> raise PrettyPrintFail
   in
-  (indent level) ^
-  match expr with
-  | Const c -> string_of_constant c
-  | Var v -> v
-  | App (f, []) -> "(" ^ string_of_expr 0 f ^ ")"
-  | App (f, x :: args) ->
-     let f = string_of_expr 0 f in
-     let x = string_of_expr 0 x in
-     let level = 2 + level + String.length f in
-     let args = List.map (string_of_expr level) args in
-     "(" ^ f ^ " " ^ x ^ "\n" ^ (String.concat "\n" args) ^ ")"
-  | Abs (args, body) ->
-     let args = List.map string_of_arg_decl args in
-     let decl = "(lambda [" ^ (String.concat " " args) ^ "]" in
-     let level = level + 2 in
-     let body = string_of_expr level body in
-     decl ^ "\n" ^ body ^ ")"
-  | Let (bindings, body) ->
-     let bindings = List.map string_of_binding bindings
-     and binding_level = level + (String.length "(let [") in
-     let separator = "\n" ^ (indent binding_level) in
-     let decl = "(let [" ^ (String.concat separator bindings) ^ "]" in
-     decl ^ "\n" ^ (string_of_expr (level + 2) body) ^ ")"
-  | Fix f -> "(fix" ^ string_of_expr 1 f ^ ")"
-  | Cond (cond, t, f) ->
-     let level = level + 4 in
-     "(if " ^ (string_of_expr 0 cond) ^ "\n"
-     ^ (string_of_expr level t) ^ "\n"
-     ^ (string_of_expr level f) ^ ")"
-  | Def (var, e) -> "(def " ^ var ^ "\n" ^ (string_of_expr (level + 2) e)
+  string_of_expr expr (fun s -> s)

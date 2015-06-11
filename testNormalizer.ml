@@ -26,5 +26,5 @@ let () =
   in
   let parsed_expressions = List.map parse expressions in
   let normalized_expressions = List.map normalize parsed_expressions in
-  let expression_strings = List.map (string_of_expr 0) normalized_expressions in
+  let expression_strings = List.map string_of_expr normalized_expressions in
   List.iter print_endline expression_strings;
