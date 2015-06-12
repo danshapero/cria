@@ -27,7 +27,15 @@ let () =
           (if (= b 0)
               a
               (f b (mod a b))))))";
-     "(let [x 1] x)"]
+     "(let [x 1] x)";
+     "(let [x 1]
+        (lambda [k:int]
+          (+ x k)))";
+     "(let [x (+ k r)
+            y (* q p)]
+        (gcd x y))";
+     "((if (> x 0) + -) x)";
+     "(f (+ a b) (* x y))"]
   in
   let parsed_expressions = List.map parse expressions in
   let expression_strings = List.map string_of_expr parsed_expressions in

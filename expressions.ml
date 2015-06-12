@@ -30,12 +30,12 @@ let string_of_constant c =
 
 exception PrettyPrintFail;;
 
-let indent_after_first_line i s =
+let indent' i s =
   let lines = Core_string.split s '\n' in
   String.concat ("\n" ^ (String.make i ' ')) lines
 
 let indent i s =
-  (String.make i ' ') ^ (indent_after_first_line i s)
+  (String.make i ' ') ^ (indent' i s)
 
 let multiline s =
   String.contains "\n" s
@@ -61,21 +61,23 @@ let rec string_of_expr expr =
            body
            (fun s -> "(lambda [" ^ args ^ "]\n" ^ (indent 2 s) ^ ")"))
     | Let (bindings, body) ->
+      let bindings = string_of_bindings bindings in
       k (string_of_term
            body
-           (fun s -> "(let [" ^ (indent_after_first_line 6 (string_of_bindings bindings)) ^ "]\n" ^ (indent 2 s) ^ ")"))
+           (fun s ->
+              "(let [" ^ (indent' 6 bindings) ^ "]\n" ^ (indent 2 s) ^ ")"))
     | Fix f ->
       k (string_of_term f (fun s -> "(fix " ^ s ^ ")"))
     | Cond (cond, t, f) ->
-      string_of_term
-        cond
-        (fun cond ->
-           string_of_term
-             t
-             (fun t ->
-                string_of_term f
-                  (fun f ->
-                     "(if " ^ cond ^ " " ^ t ^ " " ^ f ^ ")")))
+      k (string_of_term
+           cond
+           (fun cond ->
+              string_of_term
+                t
+                (fun t ->
+                   string_of_term f
+                     (fun f ->
+                        "(if " ^ cond ^ " " ^ t ^ " " ^ f ^ ")"))))
     | Def (var, e) ->
       k (string_of_term e (fun s -> "(def " ^ var ^ " " ^ s ^ ")"))
   and string_of_binding (x, e) =
