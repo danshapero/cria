@@ -61,7 +61,16 @@ let string_of_expr expr =
     | Let (bindings, body) -> raise PrettyPrintFail
     | Fix f ->
       k (string_of_term f (fun s -> "(fix " ^ s ^ ")"))
-    | Cond (cond, t, f) -> raise PrettyPrintFail
+    | Cond (cond, t, f) ->
+      string_of_term
+        cond
+        (fun cond ->
+           string_of_term
+             t
+             (fun t ->
+                string_of_term f
+                  (fun f ->
+                     "(if " ^ cond ^ " " ^ t ^ " " ^ f ^ ")")))
     | Def (var, e) ->
       k (string_of_term e (fun s -> "(def " ^ var ^ " " ^ s ^ ")"))
   and string_of_terms exprs (k:(string list)->string) =

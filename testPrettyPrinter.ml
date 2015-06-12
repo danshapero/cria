@@ -21,7 +21,12 @@ let () =
      "(lambda [x:int y:int] x)";
      "(lambda [x:int] (lambda [] x))";
      "(+ x 3)";
-     "(lambda [x:int] (lambda [k:int] (+ x k)))"]
+     "(lambda [x:int] (lambda [k:int] (+ x k)))";
+     "(fix (lambda [f:(int int -> int)]
+        (lambda [a:int b:int]
+          (if (= b 0)
+              a
+              (f b (mod a b))))))"]
   in
   let parsed_expressions = List.map parse expressions in
   let expression_strings = List.map string_of_expr parsed_expressions in
