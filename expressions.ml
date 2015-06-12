@@ -27,21 +27,27 @@ let string_of_constant c =
   | Float x -> string_of_float x
   | Bool p -> string_of_bool p
 
-let indent i = String.make i ' '
-
 exception PrettyPrintFail;;
 
 let string_of_expr expr =
-  let rec string_of_expr expr (k:string->string) =
+  let rec string_of_term expr (k:string->string) =
     match expr with
-    | Const c -> (k (string_of_constant c))
-    | Var v -> (k v)
+    | Const c -> k (string_of_constant c)
+    | Var v -> k v
     | App (f, args) -> raise PrettyPrintFail
-    | Abs (args, body) -> raise PrettyPrintFail
+    | Abs (args, body) ->
+      let string_of_args =
+        List.map (fun (x, t) -> x ^ ":" ^ (string_of_data_type t)) args
+      in
+      let args = String.concat " " string_of_args in
+      k (string_of_term
+           body
+           (fun s -> "(lambda [" ^ args ^ "] " ^ s ^ ")"))
     | Let (bindings, body) -> raise PrettyPrintFail
-    | Fix f -> raise PrettyPrintFail
+    | Fix f ->
+      k (string_of_term f (fun s -> "(fix " ^ s ^ ")"))
     | Cond (cond, t, f) -> raise PrettyPrintFail
     | Def (var, e) ->
-       (k (string_of_expr e (fun s -> "(def " ^ var ^ " " ^ s ^ ")")))
+      k (string_of_term e (fun s -> "(def " ^ var ^ " " ^ s ^ ")"))
   in
-  string_of_expr expr (fun s -> s)
+  string_of_term expr (fun s -> s)

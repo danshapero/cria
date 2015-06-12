@@ -17,7 +17,9 @@ let () =
   let expressions =
     ["1";
      "v";
-     "(def x 3)";]
+     "(def x 3)";
+     "(lambda [x:int y:int] x)";
+     "(lambda [x:int] (lambda [] x))"]
   in
   let parsed_expressions = List.map parse expressions in
   let expression_strings = List.map string_of_expr parsed_expressions in
