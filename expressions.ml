@@ -81,7 +81,8 @@ let rec string_of_expr expr =
     | Def (var, e) ->
       k (string_of_term e (fun s -> "(def " ^ var ^ " " ^ s ^ ")"))
   and string_of_binding (x, e) =
-    x ^ " " ^ string_of_expr e
+    let len = String.length x in
+    string_of_term e (fun s -> x ^ " " ^ (indent' (len + 1) s))
   and string_of_bindings bindings =
     String.concat "\n" (List.map string_of_binding bindings)
   and string_of_terms exprs (k:(string list)->string) =
