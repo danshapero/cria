@@ -1,4 +1,5 @@
 
+open Core
 open DataTypes
 
 type variable = string
@@ -29,6 +30,11 @@ let string_of_constant c =
 
 exception PrettyPrintFail;;
 
+let indent i s =
+  let lines = Core_string.split s '\n' in
+  let indented_lines = List.map (fun s -> (String.make i ' ') ^ s) lines in
+  String.concat "\n" indented_lines
+
 let string_of_expr expr =
   let rec string_of_term expr (k:string->string) =
     match expr with
@@ -42,7 +48,7 @@ let string_of_expr expr =
       let args = String.concat " " string_of_args in
       k (string_of_term
            body
-           (fun s -> "(lambda [" ^ args ^ "] " ^ s ^ ")"))
+           (fun s -> "(lambda [" ^ args ^ "]\n" ^ (indent 2 s) ^ ")"))
     | Let (bindings, body) -> raise PrettyPrintFail
     | Fix f ->
       k (string_of_term f (fun s -> "(fix " ^ s ^ ")"))
