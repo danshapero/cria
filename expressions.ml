@@ -35,12 +35,21 @@ let indent i s =
   let indented_lines = List.map (fun s -> (String.make i ' ') ^ s) lines in
   String.concat "\n" indented_lines
 
+let multiline s =
+  String.contains "\n" s
+
 let string_of_expr expr =
   let rec string_of_term expr (k:string->string) =
     match expr with
     | Const c -> k (string_of_constant c)
     | Var v -> k v
-    | App (f, args) -> raise PrettyPrintFail
+    | App (f, args) ->
+      k (string_of_term
+           f
+           (fun s ->
+              string_of_terms
+                args
+                (fun args -> "(" ^ s ^ " " ^ (String.concat " " args) ^ ")")))
     | Abs (args, body) ->
       let string_of_args =
         List.map (fun (x, t) -> x ^ ":" ^ (string_of_data_type t)) args
@@ -55,5 +64,12 @@ let string_of_expr expr =
     | Cond (cond, t, f) -> raise PrettyPrintFail
     | Def (var, e) ->
       k (string_of_term e (fun s -> "(def " ^ var ^ " " ^ s ^ ")"))
+  and string_of_terms exprs (k:(string list)->string) =
+    match exprs with
+    | [] -> k []
+    | term :: terms ->
+      string_of_term
+        term
+        (fun s -> string_of_terms terms (fun terms -> k (s :: terms)))
   in
   string_of_term expr (fun s -> s)
