@@ -2,6 +2,7 @@
 open DataTypes
 open Expressions
 open Normalize
+open OUnit
 
 exception ParseFail;;
 
@@ -13,18 +14,14 @@ let parse s =
   | None   -> raise ParseFail
 
 
-let () =
-  let expressions = ["(if b 0 1)";
-                     "(* (if (> x 0) 1 -1) x)";
-                     "(lambda [x:int y:int] (= (% x y) 0))";
-                     "(lambda [p:int]
-                        (lambda [k:int] (= (% k p) 0)))";
-                     "(let [x 3] (+ x 4))";
-                     "(let [x (f (g 0) (k 86))
-                            y (% (+ k 1) p)]
-                        (/ x y))"]
-  in
-  let parsed_expressions = List.map parse expressions in
-  let normalized_expressions = List.map normalize parsed_expressions in
-  let expression_strings = List.map string_of_expr normalized_expressions in
-  List.iter print_endline expression_strings;
+let test_fixture = "Normalizer" >:::
+[
+  "applications" >::
+    ( fun () ->
+      let e = parse "(f x y)" in
+      assert_equal e (normalize e)
+    )
+]
+
+let _ = run_test_tt_main test_fixture
+
