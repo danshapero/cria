@@ -1,2 +1,4 @@
 
-<*.ml> or "testTypeChecker.native" or "testParser.native": package(oUnit)
+true: use_menhir, thread
+<**/*{.ml,.native}>: package(core)
+<**/test*{.ml,.native}>: package(oUnit)

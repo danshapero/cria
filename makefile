@@ -1,7 +1,7 @@
 
 .SECONDARY:
 
-OCB = ocamlbuild -use-menhir -tag thread -use-ocamlfind -quiet -pkg core
+OCB = ocamlbuild -use-ocamlfind -quiet
 SOURCES = dataTypes.ml expressions.ml typeChecker.ml parser.mly lexer.mll normalize.ml
 
 all: testParser.native testTypeChecker.native testPrettyPrinter.native testNormalizer.native
@@ -9,6 +9,7 @@ all: testParser.native testTypeChecker.native testPrettyPrinter.native testNorma
 test: all
 	./testParser.native
 	./testTypeChecker.native
+	./testNormalizer.native
 
 %.native: %.ml $(SOURCES)
 	$(OCB) $@
