@@ -1,12 +1,12 @@
 
 .SECONDARY:
+.PHONY: test clean
 
 OCB = ocamlbuild -use-ocamlfind -quiet
 SOURCES = dataTypes.ml expressions.ml typeChecker.ml parser.mly lexer.mll normalize.ml
+TESTS = $(addprefix test/, $(addsuffix .native, testParser testTypeChecker testPrettyPrinter testNormalizer))
 
-all: testParser.native testTypeChecker.native testPrettyPrinter.native testNormalizer.native
-
-test: all
+test: $(SOURCES) $(TESTS)
 	./testParser.native
 	./testTypeChecker.native
 	./testNormalizer.native
