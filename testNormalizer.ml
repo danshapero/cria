@@ -19,7 +19,14 @@ let test_fixture = "Normalizer" >:::
   "applications" >::
     ( fun () ->
       let e = parse "(f x y)" in
-      assert_equal e (normalize e)
+      assert_equal e (normalize e);
+      let e = parse "(f (+ a x) y)" in
+      match normalize e with
+      | Let ((sym, e) :: [], body)
+        -> assert_equal body (App(Var "f", [Var sym; Var "y"]))
+      | Let ((x, e) :: bindings, body)
+        -> assert_failure "Should only have one let-binding!"
+      | _ -> assert_failure "No let-binding for nested application!"
     )
 ]
 
