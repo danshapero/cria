@@ -2,7 +2,7 @@
 open Expressions
 open Lexing
 open Lexer
-
+open PrettyPrinter
 
 exception ParseFail;;
 

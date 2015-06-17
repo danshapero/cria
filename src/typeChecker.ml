@@ -54,7 +54,6 @@ let rec typeof e context =
          raise (TypeCheckFailure "Types of conditional branches don't match!")
      else
        raise (TypeCheckFailure "Condition not a boolean!")
-  (* We have no way of supporting recursion with this mechanism. *)
   | Def (_, e) -> typeof e context
 
 and typeof_application f args context =
