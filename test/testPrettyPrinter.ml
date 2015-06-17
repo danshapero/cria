@@ -3,6 +3,7 @@ open Expressions
 open Lexing
 open Lexer
 open PrettyPrinter
+open Normalize
 
 exception ParseFail;;
 
@@ -35,8 +36,11 @@ let () =
             y (* q p)]
         (gcd x y))";
      "((if (> x 0) + -) x)";
-     "(f (+ a b) (* x y))"]
+     "(f (+ a b) (* x y))";
+     "((lambda [x:int] (+ x 1)) 2)"]
   in
   let parsed_expressions = List.map parse expressions in
-  let expression_strings = List.map string_of_expr parsed_expressions in
-  List.iter print_endline expression_strings;
+  let normalized_expressions = List.map normalize parsed_expressions in
+  List.iter print_endline (List.map string_of_expr parsed_expressions);
+  print_endline "";
+  List.iter print_endline (List.map string_of_expr normalized_expressions);
