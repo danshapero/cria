@@ -14,6 +14,29 @@ let parse s =
   | None   -> raise ParseFail
 
 
+let is_atomic e =
+  match e with
+  | Const _ -> true
+  | Var _ -> true
+  | _ -> false
+
+let rec is_normalized e =
+  match e with
+  | Const _ -> true
+  | Var _ -> true
+  | App (f, args) -> (is_atomic f) && (List.for_all is_atomic args)
+  | Abs (_, body) -> is_normalized body
+  | Let (bindings, body) ->
+    let rec normalized_bindings bindings =
+      match bindings with
+      | [] -> true
+      | (_, e) :: bindings -> is_normalized e && normalized_bindings bindings
+    in
+    normalized_bindings bindings && is_normalized body
+  | Fix f -> is_normalized f
+  | Cond (cond, t, f) -> is_atomic cond && is_normalized t && is_normalized f
+  | Def (_, e) -> is_normalized e
+
 let test_fixture = "Normalizer" >:::
 [
   "constants" >::
