@@ -59,19 +59,16 @@ let test_fixture = "Normalizer" >:::
     ( fun () ->
       let e = parse "(f x y)" in
       assert_equal e (normalize e);
-      let e = parse "(f (+ a x) y)" in
-      match normalize e with
-      | Let ((sym, e) :: [], body)
-        -> assert_equal body (App(Var "f", [Var sym; Var "y"]))
-      | Let ((_, _) :: bindings, _)
-        -> assert_failure "Should only have one let-binding!"
-      | _ -> assert_failure "No let-binding for nested application!"
+      let e = parse "(f (g x) y)" in
+      assert_equal true (is_normalized (normalize e))
     );
 
   "abstractions" >::
     ( fun () ->
       let e = parse "(lambda [x:int] (+ x 1))" in
-      assert_equal e (normalize e)
+      assert_equal e (normalize e);
+      let e = parse "(lambda [x:int] (+ (* a x) b))" in
+      assert_equal true (is_normalized (normalize e))
     );
 
   "let" >::
@@ -79,13 +76,19 @@ let test_fixture = "Normalizer" >:::
       let e = parse "(let [x 1] x)" in
       assert_equal e (normalize e);
       let e = parse "(let [z (let [y (* x x)] (- 1.0 y))] (/ 1.0 z))" in
-      assert_equal e (normalize e)
+      assert_equal e (normalize e);
+      let e = parse "(let [x (+ (* a y) b)
+                           z (sin (* k x))]
+                       (/ z (* 3 x)))" in
+      assert_equal true (is_normalized (normalize e))
   );
 
   "conditionals" >::
     ( fun () ->
       let e = parse "(if b 0 1)" in
-      assert_equal e (normalize e)
+      assert_equal e (normalize e);
+      let e = parse "(if (> x 0) x (- x))" in
+      assert_equal true (is_normalized (normalize e))
     )
 ]
 
