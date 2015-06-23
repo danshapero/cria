@@ -2,8 +2,6 @@
 open DataTypes
 open Expressions
 
-exception NormalizeFail;;
-
 let atomic e =
   match e with
   | Const c -> true
@@ -14,8 +12,6 @@ let count = ref 0
 let fresh_variable () =
   count := !count + 1;
   "#g-" ^ (string_of_int !count)
-
-let id x = x
 
 let rec normalize term =
   match term with

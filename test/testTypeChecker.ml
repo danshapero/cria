@@ -16,7 +16,7 @@ let parse s =
   | Some e -> e
   | None   -> raise (ParseFail "Parsing expression failed!")
 
-let test_fixture = "TypeChecker" >:::
+let test_type_check = "TypeChecker" >:::
 [
   "constants" >::
     ( fun () ->
@@ -88,9 +88,25 @@ let test_fixture = "TypeChecker" >:::
     ( fun () ->
       assert_equal (Function_t ([Int_t; Int_t], Bool_t))
                    (typeof
-                      (parse "(def divides? (lambda [x:int y:int] (= (% x y) 0)))")
+                      (parse "(def divides? (lambda [x:int y:int]
+                                (= (% x y) 0)))")
                       default_context)
     )
 ]
 
-let _ = run_test_tt_main test_fixture
+
+let test_type_check_failures = "TypeCheckFail" >:::
+[
+  "conditionals" >::
+    ( fun () ->
+      assert_raises (TypeCheckFailure "Condition not a boolean!")
+                    (fun () ->
+                     typeof (parse "(if 0 2.71 3.14)") default_context);
+      assert_raises
+        (TypeCheckFailure "Types of conditional branches don't match!")
+        (fun () -> typeof (parse "(if (> 1 0) true 3.14)") default_context)
+    )
+]
+
+let _ = run_test_tt_main test_type_check;
+        run_test_tt_main test_type_check_failures
