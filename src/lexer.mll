@@ -45,11 +45,13 @@ rule read =
   | "let"    { LET }
   | "fix"    { FIX }
   | "if"     { IF }
+  | "nil"    { NIL_T }
   | "bool"   { BOOL_T }
   | "int"    { INT_T }
   | "float"  { FLOAT_T }
   | "->"     { ARROW }
   | id       { ID (Lexing.lexeme lexbuf) }
+  | "()"     { NIL }
   | '('      { LPAREN }
   | ')'      { RPAREN }
   | '['      { LBRACK }

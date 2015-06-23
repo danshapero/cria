@@ -1,8 +1,9 @@
 
 # Structure of OLlama
-S ./
+S src
+S test
 
 EXT ounit
 PKG ounit
 
-B _build
+B _build/**

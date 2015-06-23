@@ -45,15 +45,15 @@ let rec typeof e context =
   | Let (bindings, body) -> typeof_let bindings body context
   | Fix f                -> typeof_fix f context
   | Cond (condition, true_branch, false_branch) ->
-     if (typeof condition context) = Bool_t then
-       let t_true_branch = typeof true_branch context
-       and t_false_branch = typeof false_branch context in
-       if t_true_branch = t_false_branch then
-         t_true_branch
-       else
-         raise (TypeCheckFailure "Types of conditional branches don't match!")
-     else
-       raise (TypeCheckFailure "Condition not a boolean!")
+    if (typeof condition context) = Bool_t then
+      let t_true_branch = typeof true_branch context
+      and t_false_branch = typeof false_branch context in
+      if t_true_branch = t_false_branch then
+        t_true_branch
+      else
+        raise (TypeCheckFailure "Types of conditional branches don't match!")
+    else
+      raise (TypeCheckFailure "Condition not a boolean!")
   | Def (_, e) -> typeof e context
 
 and typeof_application f args context =

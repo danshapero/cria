@@ -4,6 +4,7 @@ open DataTypes
 open Expressions
 %}
 
+%token NIL
 %token <int> INT
 %token <float> FLOAT
 %token <bool> BOOL
@@ -14,6 +15,7 @@ open Expressions
 %token LET
 %token FIX
 %token IF
+%token NIL_T
 %token BOOL_T
 %token INT_T
 %token FLOAT_T
@@ -35,6 +37,7 @@ data_type:
   | BOOL_T   { Bool_t }
   | INT_T    { Int_t }
   | FLOAT_T  { Float_t }
+  | NIL_T    { Nil_t }
   | LPAREN; args = list(data_type); ARROW; ret = data_type; RPAREN;
     { Function_t (args, ret) }
   ;
@@ -45,6 +48,7 @@ expr:
   | i = INT                    { Const (Int i) }
   | x = FLOAT                  { Const (Float x) }
   | p = BOOL                   { Const (Bool p) }
+  | _ = NIL                    { Const Nil }
   | s = ID                     { Var s }
   ;
 
