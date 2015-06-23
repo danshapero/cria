@@ -108,5 +108,26 @@ let test_type_check_failures = "TypeCheckFail" >:::
     )
 ]
 
+
+let test_type_check_program = "TypeCheckProgram" >:::
+[
+  "global defines" >::
+  ( fun () ->
+      let code =
+        ["(def gcd
+           (fix (lambda [f:(int int -> int)]
+                   (lambda [a:int b:int]
+                      (if (= b 0)
+                          a
+                          (f b (% a b)))))))";
+         "(gcd 42 24)"]
+      in
+      let context = typecheck (List.map parse code) default_context in
+      assert_equal (Function_t ([Int_t; Int_t], Int_t))
+                   (StringMap.find "gcd" context)
+  )
+]
+
 let _ = run_test_tt_main test_type_check
 let _ = run_test_tt_main test_type_check_failures
+let _ = run_test_tt_main test_type_check_program
