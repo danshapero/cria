@@ -89,3 +89,16 @@ and typeof_fix f context =
        raise (TypeCheckFailure
                 "Arg/return types of function passed to Fix do not match.")
   | _ -> raise (TypeCheckFailure "Argument to fix is not a function!")
+
+
+let rec typecheck program context =
+  match program with
+  | [] -> context
+  | e :: program ->
+    let t = typeof e context in
+    let context =
+      (match e with
+       | Def (x, body) -> add_binding x t context
+       | _ -> context)
+    in
+    typecheck program context

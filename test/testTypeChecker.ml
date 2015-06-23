@@ -108,5 +108,5 @@ let test_type_check_failures = "TypeCheckFail" >:::
     )
 ]
 
-let _ = run_test_tt_main test_type_check;
-        run_test_tt_main test_type_check_failures
+let _ = run_test_tt_main test_type_check
+let _ = run_test_tt_main test_type_check_failures
