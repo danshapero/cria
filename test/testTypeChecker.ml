@@ -124,7 +124,7 @@ let test_type_check_program = "TypeCheckProgram" >:::
       in
       let context = typecheck (List.map parse code) default_context in
       assert_equal (Function_t ([Int_t; Int_t], Int_t))
-                   (StringMap.find "gcd" context)
+                   (typeof_variable "gcd" context)
   )
 ]
 

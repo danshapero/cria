@@ -11,7 +11,7 @@ let input_output = ["printi"]
 
 let default_context =
   let ctxt = add_variables input_output
-                           (Function_t ([Int_t], Int_t))
+                           (Function_t ([Int_t], Nil_t))
                            empty_context
   in
   let ctxt = add_variables iarithmetic
