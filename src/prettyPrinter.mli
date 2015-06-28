@@ -1,2 +1,2 @@
 
-val string_of_expr : Expressions.t -> string
+val string_of_expr : Expr.t -> string

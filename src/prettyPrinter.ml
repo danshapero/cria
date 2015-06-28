@@ -1,6 +1,6 @@
 
 open Core
-open Expressions
+open Expr
 
 let string_of_constant c =
   match c with

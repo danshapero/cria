@@ -1,5 +1,5 @@
 
-open Expressions
+open Expr
 open Lexing
 open Lexer
 open PrettyPrinter

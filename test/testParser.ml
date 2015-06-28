@@ -1,7 +1,7 @@
 
 open OUnit
 open DataTypes
-open Expressions
+open Expr
 open Lexer
 open Lexing
 

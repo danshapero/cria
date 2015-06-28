@@ -24,23 +24,23 @@ let rec add_bindings bindings context =
 
 
 let typeof_constant = function
-  | Expressions.Nil -> DataTypes.Nil_t
-  | Expressions.Int _ -> DataTypes.Int_t
-  | Expressions.Float _ -> DataTypes.Float_t
-  | Expressions.Bool _ -> DataTypes.Bool_t
+  | Expr.Nil -> DataTypes.Nil_t
+  | Expr.Int _ -> DataTypes.Int_t
+  | Expr.Float _ -> DataTypes.Float_t
+  | Expr.Bool _ -> DataTypes.Bool_t
 
 let typeof_variable x context =
   StringMap.find x context
 
 let rec typeof e context =
   match e with
-  | Expressions.Const a -> typeof_constant a
-  | Expressions.Var x -> typeof_variable x context
-  | Expressions.App (f, args) -> typeof_application f args context
-  | Expressions.Abs (args, body) -> typeof_abstraction args body context
-  | Expressions.Let (bindings, body) -> typeof_let bindings body context
-  | Expressions.Fix f -> typeof_fix f context
-  | Expressions.Cond (condition, true_branch, false_branch) ->
+  | Expr.Const a -> typeof_constant a
+  | Expr.Var x -> typeof_variable x context
+  | Expr.App (f, args) -> typeof_application f args context
+  | Expr.Abs (args, body) -> typeof_abstraction args body context
+  | Expr.Let (bindings, body) -> typeof_let bindings body context
+  | Expr.Fix f -> typeof_fix f context
+  | Expr.Cond (condition, true_branch, false_branch) ->
     if (typeof condition context) = DataTypes.Bool_t then
       let t_true_branch = typeof true_branch context
       and t_false_branch = typeof false_branch context in
@@ -50,7 +50,7 @@ let rec typeof e context =
         raise (TypeCheckFailure "Types of conditional branches don't match!")
     else
       raise (TypeCheckFailure "Condition not a boolean!")
-  | Expressions.Def (_, e) -> typeof e context
+  | Expr.Def (_, e) -> typeof e context
 
 and typeof_application f args context =
   let arg_types = List.map (fun x -> typeof x context) args in
@@ -94,7 +94,7 @@ let rec typecheck program context =
     let t = typeof e context in
     let context =
       (match e with
-       | Expressions.Def (x, body) -> add_binding x t context
+       | Expr.Def (x, body) -> add_binding x t context
        | _ -> context)
     in
     typecheck program context

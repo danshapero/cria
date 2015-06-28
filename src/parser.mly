@@ -1,7 +1,7 @@
 
 %{
 open DataTypes
-open Expressions
+open Expr
 %}
 
 %token NIL
@@ -25,7 +25,7 @@ open Expressions
 %token LBRACK
 %token RBRACK
 %token EOF
-%start <Expressions.t option> prog
+%start <Expr.t option> prog
 
 %%
 

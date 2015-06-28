@@ -13,5 +13,5 @@ val add_variables : (Var.t list) ->
 val typeof_variable : Var.t ->
                       type_context ->
                       DataTypes.t
-val typeof : Expressions.t -> type_context -> DataTypes.t
-val typecheck : (Expressions.t list) -> type_context -> type_context
+val typeof : Expr.t -> type_context -> DataTypes.t
+val typecheck : (Expr.t list) -> type_context -> type_context

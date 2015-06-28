@@ -1,2 +1,2 @@
 
-val normalize : Expressions.t -> Expressions.t
+val normalize : Expr.t -> Expr.t

@@ -1,5 +1,5 @@
 
-open Expressions
+open Expr
 open Normalize
 open OUnit
 
