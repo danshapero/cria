@@ -1,6 +1,5 @@
 
 open DataTypes
-open Expressions
 open TypeChecker
 
 let iarithmetic = ["+"; "-"; "*"; "/"; "^"; "%"]

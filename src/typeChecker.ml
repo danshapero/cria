@@ -1,6 +1,4 @@
 
-open Expressions
-
 exception TypeCheckFailure of string;;
 
 module StringMap = Map.Make(String)
@@ -25,25 +23,24 @@ let rec add_bindings bindings context =
   | (x, t) :: bindings -> add_bindings bindings (add_binding x t context)
 
 
-let typeof_constant a =
-  match a with
-  | Nil -> DataTypes.Nil_t
-  | Int _ -> DataTypes.Int_t
-  | Float _ -> DataTypes.Float_t
-  | Bool _ -> DataTypes.Bool_t
+let typeof_constant = function
+  | Expressions.Nil -> DataTypes.Nil_t
+  | Expressions.Int _ -> DataTypes.Int_t
+  | Expressions.Float _ -> DataTypes.Float_t
+  | Expressions.Bool _ -> DataTypes.Bool_t
 
 let typeof_variable x context =
   StringMap.find x context
 
 let rec typeof e context =
   match e with
-  | Const a              -> typeof_constant a
-  | Var x                -> typeof_variable x context
-  | App (f, args)        -> typeof_application f args context
-  | Abs (args, body)     -> typeof_abstraction args body context
-  | Let (bindings, body) -> typeof_let bindings body context
-  | Fix f                -> typeof_fix f context
-  | Cond (condition, true_branch, false_branch) ->
+  | Expressions.Const a -> typeof_constant a
+  | Expressions.Var x -> typeof_variable x context
+  | Expressions.App (f, args) -> typeof_application f args context
+  | Expressions.Abs (args, body) -> typeof_abstraction args body context
+  | Expressions.Let (bindings, body) -> typeof_let bindings body context
+  | Expressions.Fix f -> typeof_fix f context
+  | Expressions.Cond (condition, true_branch, false_branch) ->
     if (typeof condition context) = DataTypes.Bool_t then
       let t_true_branch = typeof true_branch context
       and t_false_branch = typeof false_branch context in
@@ -53,7 +50,7 @@ let rec typeof e context =
         raise (TypeCheckFailure "Types of conditional branches don't match!")
     else
       raise (TypeCheckFailure "Condition not a boolean!")
-  | Def (_, e) -> typeof e context
+  | Expressions.Def (_, e) -> typeof e context
 
 and typeof_application f args context =
   let arg_types = List.map (fun x -> typeof x context) args in
@@ -97,7 +94,7 @@ let rec typecheck program context =
     let t = typeof e context in
     let context =
       (match e with
-       | Def (x, body) -> add_binding x t context
+       | Expressions.Def (x, body) -> add_binding x t context
        | _ -> context)
     in
     typecheck program context

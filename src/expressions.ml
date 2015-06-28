@@ -1,19 +1,19 @@
 
-type variable = string
+type var = string
 
-type constant =
+type const =
   | Nil
   | Int of int
   | Float of float
   | Bool of bool
 
-type expr =
-  | Const of constant
-  | Var of variable
-  | App of expr * expr list
-  | Abs of (variable * DataTypes.t) list * expr
-  | Let of (variable * expr) list * expr
-  | Fix of expr
-  | Cond of (expr * expr * expr)
-  | Def of (variable * expr)
+type t =
+  | Const of const
+  | Var of var
+  | App of t * t list
+  | Abs of (var * DataTypes.t) list * t
+  | Let of (var * t) list * t
+  | Fix of t
+  | Cond of (t * t * t)
+  | Def of (var * t)
 

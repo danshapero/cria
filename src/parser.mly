@@ -25,7 +25,7 @@ open Expressions
 %token LBRACK
 %token RBRACK
 %token EOF
-%start <Expressions.expr option> prog
+%start <Expressions.t option> prog
 
 %%
 

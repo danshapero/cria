@@ -17,7 +17,7 @@ let rec normalize term =
   | Const c -> term
   | Var x -> term
   | App (f, args)
-    -> normalize_name f (fun f->
+    -> normalize_name f (fun f ->
         normalize_names args (fun args -> App (f, args)))
   | Abs (args, body) -> Abs (args, normalize body)
   | Let ([], body) -> normalize body
