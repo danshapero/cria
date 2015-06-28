@@ -8,7 +8,7 @@ open Expressions
 %token <int> INT
 %token <float> FLOAT
 %token <bool> BOOL
-%token <string> ID
+%token <Var.t> ID
 %token COLON
 %token DEF
 %token LAMBDA

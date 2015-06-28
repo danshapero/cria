@@ -7,11 +7,6 @@ let atomic e =
   | Var x -> true
   | _ -> false
 
-let count = ref 0
-let fresh_variable () =
-  count := !count + 1;
-  "#g-" ^ (string_of_int !count)
-
 let rec normalize term =
   match term with
   | Const c -> term
@@ -32,7 +27,7 @@ and normalize_name term k =
   if (atomic term) then
     k term
   else
-    let v = fresh_variable () in
+    let v = Var.gen_var "g" in
     Let ([v, term], k (Var v))
 and normalize_names terms k =
   match terms with
