@@ -1,5 +1,4 @@
 
-open DataTypes
 open Expressions
 
 let atomic e =
@@ -33,8 +32,8 @@ and normalize_name term k =
   if (atomic term) then
     k term
   else
-    let t = fresh_variable () in
-    Let ([t, term], k (Var t))
+    let v = fresh_variable () in
+    Let ([v, term], k (Var v))
 and normalize_names terms k =
   match terms with
   | [] -> k []

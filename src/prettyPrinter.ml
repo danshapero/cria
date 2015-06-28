@@ -1,6 +1,5 @@
 
 open Core
-open DataTypes
 open Expressions
 
 let string_of_constant c =
@@ -34,7 +33,7 @@ let rec string_of_expr expr =
                 (fun args -> "(" ^ s ^ " " ^ (String.concat " " args) ^ ")")))
     | Abs (args, body) ->
       let string_of_args =
-        List.map (fun (x, t) -> x ^ ":" ^ (string_of_data_type t)) args
+        List.map (fun (x, t) -> x ^ ":" ^ (DataTypes.string_of_data_type t)) args
       in
       let args = String.concat " " string_of_args in
       k (string_of_term

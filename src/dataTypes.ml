@@ -1,13 +1,12 @@
 
-type data_type =
+type t =
   | Nil_t
   | Bool_t
   | Int_t
   | Float_t
-  | Function_t of (data_type list) * data_type
+  | Function_t of t list * t
 
-let rec string_of_data_type t =
-  match t with
+let rec string_of_data_type = function
   | Nil_t -> "nil"
   | Bool_t -> "bool"
   | Int_t -> "int"

@@ -1,11 +1,10 @@
 
-open DataTypes
 open Expressions
 
 exception TypeCheckFailure of string;;
 
 module StringMap = Map.Make(String)
-type type_context = data_type StringMap.t
+type type_context = DataTypes.t StringMap.t
 
 let empty_context = StringMap.empty
 
@@ -28,10 +27,10 @@ let rec add_bindings bindings context =
 
 let typeof_constant a =
   match a with
-  | Nil -> Nil_t
-  | Int _ -> Int_t
-  | Float _ -> Float_t
-  | Bool _ -> Bool_t
+  | Nil -> DataTypes.Nil_t
+  | Int _ -> DataTypes.Int_t
+  | Float _ -> DataTypes.Float_t
+  | Bool _ -> DataTypes.Bool_t
 
 let typeof_variable x context =
   StringMap.find x context
@@ -45,7 +44,7 @@ let rec typeof e context =
   | Let (bindings, body) -> typeof_let bindings body context
   | Fix f                -> typeof_fix f context
   | Cond (condition, true_branch, false_branch) ->
-    if (typeof condition context) = Bool_t then
+    if (typeof condition context) = DataTypes.Bool_t then
       let t_true_branch = typeof true_branch context
       and t_false_branch = typeof false_branch context in
       if t_true_branch = t_false_branch then
@@ -59,7 +58,7 @@ let rec typeof e context =
 and typeof_application f args context =
   let arg_types = List.map (fun x -> typeof x context) args in
   match (typeof f context) with
-  | Function_t (f_arg_types, ret_type) ->
+  | DataTypes.Function_t (f_arg_types, ret_type) ->
     if arg_types = f_arg_types then
       ret_type
     else
@@ -70,7 +69,7 @@ and typeof_abstraction args body context =
   let context = add_bindings args context
   and arg_types = List.map (fun p -> snd p) args in
   let body_type = typeof body context in
-  Function_t (arg_types, body_type)
+  DataTypes.Function_t (arg_types, body_type)
 
 and typeof_let bindings body context =
   let context' = List.fold_left
@@ -82,7 +81,7 @@ and typeof_let bindings body context =
 
 and typeof_fix f context =
   match typeof f context with
-  | Function_t ([arg], ret) ->
+  | DataTypes.Function_t ([arg], ret) ->
      if arg = ret then
        ret
      else

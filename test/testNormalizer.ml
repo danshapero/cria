@@ -1,5 +1,4 @@
 
-open DataTypes
 open Expressions
 open Normalize
 open OUnit

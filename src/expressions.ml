@@ -1,6 +1,4 @@
 
-open DataTypes
-
 type variable = string
 
 type constant =
@@ -13,7 +11,7 @@ type expr =
   | Const of constant
   | Var of variable
   | App of expr * expr list
-  | Abs of (variable * data_type) list * expr
+  | Abs of (variable * DataTypes.t) list * expr
   | Let of (variable * expr) list * expr
   | Fix of expr
   | Cond of (expr * expr * expr)
