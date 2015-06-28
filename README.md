@@ -1,6 +1,8 @@
-# llvm-dabbling
+# cria
 
-Goofing about with LLVM. How the hell else am I going to learn it?
+[Cria](http://www.wep.co.nz/wep/member-images/85/image/New%20Cria%20/Snow%20Legend%20x%20Truly%20female%20cria.JPG) (n): a baby llama or alpaca
+
+Goofing about with LLVM and OCaml. How the hell else am I going to learn it?
 
 The goal is to implement a functional language with Lisp syntax (or lack thereof) and ML-like semantics, which will compile to LLVM.
 
