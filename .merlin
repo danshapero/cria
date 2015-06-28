@@ -1,6 +1,8 @@
 
 # Structure of OLlama
 S src
+S src/syntactic
+S src/semantic
 S test
 
 EXT ounit
