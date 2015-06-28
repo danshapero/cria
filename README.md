@@ -2,6 +2,9 @@
 
 Goofing about with LLVM. How the hell else am I going to learn it?
 
+The goal is to implement a functional language with Lisp syntax (or lack thereof) and ML-like semantics, which will compile to LLVM.
+
+
 Dependencies
 ============
 * [opam](https://opam.ocaml.org/doc/Install.html). Linux users: don't install it from the package manager, use their installer script.
