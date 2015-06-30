@@ -3,6 +3,8 @@
     code or the top-level environment. *)
 type t = string
 
+let compare var1 var2 = String.compare var1 var2
+
 let count = ref 0
 let gen_var s =
   incr count;
