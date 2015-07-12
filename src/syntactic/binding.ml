@@ -16,7 +16,7 @@ let rec occurs_free var expr =
     let bound_vars = List.map fst bindings in
     not (List.mem var bound_vars) && (occurs_free var body)
   | Fix f -> occurs_free var f
-  | Cond (cond, t, f) ->
+  | Cond(cond, t, f) ->
     not ((occurs_free var cond) || (occurs_free var t) || (occurs_free var f))
   | Def(x, body) ->
     not (var = x) && (occurs_free var body)
