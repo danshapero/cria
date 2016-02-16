@@ -3,7 +3,7 @@
 .PHONY: test clean
 
 OCB = ocamlbuild -use-ocamlfind -quiet -Is src,src/syntactic,src/semantic,test
-TESTS = $(addsuffix .native, testParser testTypeChecker testPrettyPrinter testNormalizer testFindFreeVars testRenaming)
+TESTS = $(addsuffix .native, testParser testTypeChecker testPrettyPrinter testNormalizer testFindFreeVars testRenaming testNExpr)
 
 test: $(TESTS)
 	./testParser.native
