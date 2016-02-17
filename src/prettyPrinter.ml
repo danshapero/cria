@@ -1,5 +1,6 @@
 
 open Core
+open Core_kernel
 open Expr
 
 let string_of_constant c =
