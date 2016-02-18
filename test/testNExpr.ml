@@ -1,6 +1,5 @@
 
 open NExpr
-open OUnit
 
 exception ParseFail;;
 
@@ -10,3 +9,8 @@ let parse s =
   match e with
   | Some e -> e
   | None -> raise ParseFail
+
+
+let _ =
+  let e = parse "(lambda [k:int] (lambda [x:int] (= 0 (/ x k))))" in
+  normalize e

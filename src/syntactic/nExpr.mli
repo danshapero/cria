@@ -7,7 +7,7 @@ type a =
 
 and c =
   | App of a * a list
-  | Cond of a * a * a
+  | Cond of a * t * t
 
 and t =
   | Def of Var.t * t
