@@ -40,7 +40,7 @@ let rec normalize term =
          Complex (Cond (c, normalize t, normalize f)))
   | Expr.Def (var, e) -> Def (var, normalize e)
 
-and normalize_name (term:Expr.t) (k:a -> t) =
+and normalize_name term k =
   let atom =
     match term with
     | Expr.Const c -> Some (Const c)
@@ -53,7 +53,7 @@ and normalize_name (term:Expr.t) (k:a -> t) =
     let v = Var.gen_var "g" in
     Let ([v, normalize term], k (Var v))
 
-and normalize_names terms (k:a list -> t) =
+and normalize_names terms k =
   match terms with
   | [] -> k []
   | term :: terms ->
