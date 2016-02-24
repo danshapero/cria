@@ -39,7 +39,4 @@ let () =
      "((lambda [x:int] (+ x 1)) 2)"]
   in
   let parsed_expressions = List.map parse expressions in
-  let normalized_expressions = List.map Normalize.normalize parsed_expressions in
   List.iter print_endline (List.map string_of_expr parsed_expressions);
-  print_endline "";
-  List.iter print_endline (List.map string_of_expr normalized_expressions);
